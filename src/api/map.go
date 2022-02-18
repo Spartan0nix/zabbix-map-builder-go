@@ -19,8 +19,9 @@ type map_create_response struct {
 	Id       int                 `json:"id"`
 }
 
-func (a Api) handle_response(resp []byte) map_response {
+func handle_map_response(resp []byte) map_response {
 	data := map_response{}
+	// fmt.Println(string(resp))
 
 	err := json.Unmarshal(resp, &data)
 	if err != nil {
@@ -30,7 +31,17 @@ func (a Api) handle_response(resp []byte) map_response {
 	return data
 }
 
-func (a Api) Get_by_name(name string) map_response {
+func (a Api) extract_map_id(resp []byte) string {
+	data := map_create_response{}
+	err := json.Unmarshal(resp, &data)
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+
+	return data.Result["sysmapids"][0]
+}
+
+func (a Api) Get_map_by_name(name string) map_response {
 	payload := Payload{
 		JSON_RPC: "2.0",
 		Method:   "map.get",
@@ -50,7 +61,35 @@ func (a Api) Get_by_name(name string) map_response {
 
 	response := a.post(body)
 
-	return a.handle_response(response)
+	return handle_map_response(response)
+}
+
+func (a Api) Get_map_by_id(id string) map_response {
+	payload := Payload{
+		JSON_RPC: "2.0",
+		Method:   "map.get",
+		Params: map[string]string{
+			"output":           "extend",
+			"selectSelements":  "extend",
+			"selectLinks":      "extend",
+			"selectUsers":      "extend",
+			"selectUserGroups": "extend",
+			"selectShapes":     "extend",
+			"selectLines":      "extend",
+			"sysmapids":        id,
+		},
+		Auth: a.Token,
+		Id:   1,
+	}
+
+	body, err := json.Marshal(payload)
+	if err != nil {
+		fmt.Printf("Error : %s", err)
+	}
+
+	response := a.post(body)
+
+	return handle_map_response(response)
 }
 
 func (a Api) Create_map(name string) string {
@@ -73,12 +112,24 @@ func (a Api) Create_map(name string) string {
 
 	resp := a.post(body)
 
-	data := map_create_response{}
+	return a.extract_map_id(resp)
+}
 
-	err = json.Unmarshal(resp, &data)
-	if err != nil {
-		fmt.Println("error:", err)
+func (a Api) Update_map(raw_map Map) string {
+	payload := Payload{
+		JSON_RPC: "2.0",
+		Method:   "map.update",
+		Params:   raw_map,
+		Auth:     a.Token,
+		Id:       1,
 	}
 
-	return data.Result["sysmapids"][0]
+	body, err := json.Marshal(payload)
+	if err != nil {
+		fmt.Printf("Error : %s", err)
+	}
+
+	resp := a.post(body)
+
+	return a.extract_map_id(resp)
 }

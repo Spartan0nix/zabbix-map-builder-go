@@ -90,47 +90,47 @@ func build_map(routers []Fixture, Api api.Api, current_map api.Map) {
 }
 
 func main() {
-	FIXTURES := make([]Fixture, 0)
-	FIXTURES = append(FIXTURES, Fixture{
-		local_hostname:   "routeur-1",
-		local_interface:  "FastEthernet1/0",
-		remote_hostname:  "routeur-2",
-		remote_interface: "FastEthernet1/0",
-	})
-	FIXTURES = append(FIXTURES, Fixture{
-		local_hostname:   "routeur-2",
-		local_interface:  "FastEthernet2/0",
-		remote_hostname:  "routeur-3",
-		remote_interface: "FastEthernet2/0",
-	})
-	FIXTURES = append(FIXTURES, Fixture{
-		local_hostname:   "routeur-2",
-		local_interface:  "FastEthernet2/0",
-		remote_hostname:  "routeur-3",
-		remote_interface: "FastEthernet2/0",
-	})
+	// FIXTURES := make([]Fixture, 0)
+	// FIXTURES = append(FIXTURES, Fixture{
+	// 	local_hostname:   "routeur-1",
+	// 	local_interface:  "FastEthernet1/0",
+	// 	remote_hostname:  "routeur-2",
+	// 	remote_interface: "FastEthernet1/0",
+	// })
+	// FIXTURES = append(FIXTURES, Fixture{
+	// 	local_hostname:   "routeur-2",
+	// 	local_interface:  "FastEthernet2/0",
+	// 	remote_hostname:  "routeur-3",
+	// 	remote_interface: "FastEthernet2/0",
+	// })
+	// FIXTURES = append(FIXTURES, Fixture{
+	// 	local_hostname:   "routeur-2",
+	// 	local_interface:  "FastEthernet2/0",
+	// 	remote_hostname:  "routeur-3",
+	// 	remote_interface: "FastEthernet2/0",
+	// })
 
-	var Api, MAP_NAME = init_api()
+	// var Api, MAP_NAME = init_api()
 
-	zabbix_map := Api.Map_get_by_name(MAP_NAME)
-	var map_id string
+	// zabbix_map := Api.Map_get_by_name(MAP_NAME)
+	// var map_id string
 
-	if len(zabbix_map) == 0 {
-		fmt.Println("Map not existing. Creating the map...")
-		map_id = Api.Map_create(MAP_NAME)
-	} else {
-		map_id = zabbix_map[0].Sysmapid
-	}
+	// if len(zabbix_map) == 0 {
+	// 	fmt.Println("Map not existing. Creating the map...")
+	// 	map_id = Api.Map_create(MAP_NAME)
+	// } else {
+	// 	map_id = zabbix_map[0].Sysmapid
+	// }
 
-	current_map := Api.Map_get_by_id(map_id)[0]
-	current_map.Selements = make([]api.Map_selement, 0)
-	current_map.Links = make([]api.Map_link, 0)
+	// current_map := Api.Map_get_by_id(map_id)[0]
+	// current_map.Selements = make([]api.Map_selement, 0)
+	// current_map.Links = make([]api.Map_link, 0)
 
-	Api.Map_update(current_map)
+	// Api.Map_update(current_map)
 
-	// ------------------------------------------------------------
-	// 	Build_map function
-	// ------------------------------------------------------------
-	build_map(FIXTURES, Api, current_map)
+	// // ------------------------------------------------------------
+	// // 	Build_map function
+	// // ------------------------------------------------------------
+	// build_map(FIXTURES, Api, current_map)
 
 }

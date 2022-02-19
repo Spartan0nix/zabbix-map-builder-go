@@ -2,10 +2,13 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 	"zabbix.builder/main/src/api"
+	"zabbix.builder/main/src/snmp"
 )
 
 // -------------------------------------------------
@@ -133,4 +136,33 @@ func main() {
 	// // ------------------------------------------------------------
 	// build_map(FIXTURES, Api, current_map)
 
+	// ------------------------------------------------------------
+	// 	snmp function
+	// ------------------------------------------------------------
+	err := godotenv.Load()
+	if err != nil {
+		panic(err)
+	}
+
+	routeur := os.Getenv("R1")
+	SNMP_COMMUNITY := os.Getenv("SNMP_COMMUNITY")
+	SNMP_PORT := os.Getenv("SNMP_PORT")
+	snmp_port, _ := strconv.ParseUint(SNMP_PORT, 10, 16)
+
+	Snmp := snmp.Snmp_init(routeur, uint16(snmp_port), SNMP_COMMUNITY)
+	defer Snmp.Conn.Close()
+
+	local_hostname := snmp.Snmp_get_local_hostname(Snmp)
+	fmt.Println(local_hostname)
+
+	remote_ip_oid := "1.3.6.1.4.1.9.9.23.1.2.1.1.4"
+	res, err := Snmp.BulkWalkAll(remote_ip_oid)
+	if err != nil {
+		log.Fatalf("Error while retrieve oid '%s' : .Reason : %v", remote_ip_oid, err)
+	}
+
+	remote_ips := snmp.Extract_ip(res)
+	indexes := snmp.Extract_index(res)
+	fmt.Println(remote_ips)
+	fmt.Println(indexes)
 }

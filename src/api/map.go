@@ -19,7 +19,7 @@ type map_create_response struct {
 	Id       int                 `json:"id"`
 }
 
-func handle_map_response(resp []byte) map_response {
+func map_handle_response(resp []byte) map_response {
 	data := map_response{}
 	// fmt.Println(string(resp))
 
@@ -31,7 +31,7 @@ func handle_map_response(resp []byte) map_response {
 	return data
 }
 
-func (a Api) extract_map_id(resp []byte) string {
+func (a Api) map_extract_id(resp []byte) string {
 	data := map_create_response{}
 	err := json.Unmarshal(resp, &data)
 	if err != nil {
@@ -41,7 +41,7 @@ func (a Api) extract_map_id(resp []byte) string {
 	return data.Result["sysmapids"][0]
 }
 
-func (a Api) Get_map_by_name(name string) map_response {
+func (a Api) Map_get_by_name(name string) []Map {
 	payload := Payload{
 		JSON_RPC: "2.0",
 		Method:   "map.get",
@@ -61,10 +61,10 @@ func (a Api) Get_map_by_name(name string) map_response {
 
 	response := a.post(body)
 
-	return handle_map_response(response)
+	return map_handle_response(response).Result
 }
 
-func (a Api) Get_map_by_id(id string) map_response {
+func (a Api) Map_get_by_id(id string) []Map {
 	payload := Payload{
 		JSON_RPC: "2.0",
 		Method:   "map.get",
@@ -89,10 +89,10 @@ func (a Api) Get_map_by_id(id string) map_response {
 
 	response := a.post(body)
 
-	return handle_map_response(response)
+	return map_handle_response(response).Result
 }
 
-func (a Api) Create_map(name string) string {
+func (a Api) Map_create(name string) string {
 	payload := Payload{
 		JSON_RPC: "2.0",
 		Method:   "map.create",
@@ -112,10 +112,10 @@ func (a Api) Create_map(name string) string {
 
 	resp := a.post(body)
 
-	return a.extract_map_id(resp)
+	return a.map_extract_id(resp)
 }
 
-func (a Api) Update_map(raw_map Map) string {
+func (a Api) Map_update(raw_map Map) string {
 	payload := Payload{
 		JSON_RPC: "2.0",
 		Method:   "map.update",
@@ -131,5 +131,90 @@ func (a Api) Update_map(raw_map Map) string {
 
 	resp := a.post(body)
 
-	return a.extract_map_id(resp)
+	return a.map_extract_id(resp)
+}
+
+func (a Api) Map_build_selement(name string, hostid string) Map_selement {
+	element := Map_selement{}
+
+	element.Selementid = hostid
+	element.Elementtype = "0"
+	element.Elements = append(element.Elements, map[string]string{
+		"hostid": hostid,
+	})
+	element.Iconid_off = "156"
+	element.Label = name
+	element.Label_location = "-1"
+	element.Inherited_label = name
+	element.Label_type = "2"
+	element.ElementName = name
+
+	return element
+}
+
+func (a Api) Map_selement_exist(zabbix_map Map, selement_hostid string) string {
+	for _, selement := range zabbix_map.Selements {
+		if selement.Elements[0]["hostid"] == selement_hostid {
+			return selement.Selementid
+		}
+	}
+	return ""
+}
+
+func (a Api) Map_add_selement(zabbix_map Map, selement Map_selement) Map {
+	zabbix_map.Selements = append(zabbix_map.Selements, selement)
+	return zabbix_map
+}
+
+func (a Api) Map_build_link(local_hostid string,
+	remote_hostid string,
+	local_interface string,
+	remote_interface string,
+	local_trigger string,
+	remote_trigger string,
+) Map_link {
+	link := Map_link{}
+
+	link.Selementid1 = local_hostid
+	link.Selementid2 = remote_hostid
+	link.Label = local_interface + " - " + remote_interface
+	link.Linktriggers = append(link.Linktriggers, map[string]string{
+		"triggerid": local_trigger,
+		"color":     "DD0000",
+	})
+	link.Linktriggers = append(link.Linktriggers, map[string]string{
+		"triggerid": remote_trigger,
+		"color":     "DD0000",
+	})
+	link.Color = "00CC00"
+
+	return link
+}
+
+func (a Api) Map_link_exist(zabbix_map Map,
+	local_interface string,
+	remote_interface string,
+	local_hostid string,
+	remote_hostid string,
+) bool {
+	label := local_interface + " - " + remote_interface
+	reverse_label := remote_interface + " - " + local_interface
+	for _, link := range zabbix_map.Links {
+		if link.Label == label {
+			if link.Selementid1 == local_hostid && link.Selementid2 == remote_hostid {
+				return true
+			}
+		}
+		if link.Label == reverse_label {
+			if link.Selementid1 == remote_hostid && link.Selementid2 == local_hostid {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (a Api) Map_add_link(zabbix_map Map, link Map_link) Map {
+	zabbix_map.Links = append(zabbix_map.Links, link)
+	return zabbix_map
 }

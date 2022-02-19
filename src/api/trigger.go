@@ -5,15 +5,15 @@ import (
 	"fmt"
 )
 
-type host_response struct {
+type trigger_response struct {
 	JSON_RPC string      `json:"jsonrpc"`
-	Result   []Host      `json:"result,omitempty"`
+	Result   []Trigger   `json:"result,omitempty"`
 	Error    interface{} `json:"error,omitempty"`
 	Id       int         `json:"id"`
 }
 
-func host_handle_response(resp []byte) host_response {
-	data := host_response{}
+func trigger_handle_response(resp []byte) trigger_response {
+	data := trigger_response{}
 	// fmt.Println(string(resp))
 
 	err := json.Unmarshal(resp, &data)
@@ -24,14 +24,15 @@ func host_handle_response(resp []byte) host_response {
 	return data
 }
 
-func (a Api) Host_get_id(host string) []Host {
+func (a Api) Trigger_get_id(hostid string, host_interface string) []Trigger {
 	payload := Payload{
 		JSON_RPC: "2.0",
-		Method:   "host.get",
+		Method:   "trigger.get",
 		Params: map[string]interface{}{
+			"hostids": hostid,
 			"filter": map[string]interface{}{
-				"host": []string{
-					host,
+				"description": map[string]string{
+					"name": "Interface " + host_interface + " is down",
 				},
 			},
 		},
@@ -46,5 +47,5 @@ func (a Api) Host_get_id(host string) []Host {
 
 	resp := a.post(body)
 
-	return host_handle_response(resp).Result
+	return trigger_handle_response(resp).Result
 }

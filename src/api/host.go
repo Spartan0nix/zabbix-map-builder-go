@@ -12,7 +12,7 @@ type host_response struct {
 	Id       int         `json:"id"`
 }
 
-func handle_host_response(resp []byte) host_response {
+func host_handle_response(resp []byte) host_response {
 	data := host_response{}
 	// fmt.Println(string(resp))
 
@@ -24,7 +24,7 @@ func handle_host_response(resp []byte) host_response {
 	return data
 }
 
-func (a Api) Get_host_id(host string) host_response {
+func (a Api) Host_get_id(host string) []Host {
 	payload := Payload{
 		JSON_RPC: "2.0",
 		Method:   "host.get",
@@ -46,5 +46,5 @@ func (a Api) Get_host_id(host string) host_response {
 
 	resp := a.post(body)
 
-	return handle_host_response(resp)
+	return host_handle_response(resp).Result
 }

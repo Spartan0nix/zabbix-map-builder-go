@@ -43,6 +43,45 @@ func Snmp_get_local_hostname(snmp *gosnmp.GoSNMP) string {
 	return string(variable.Value.([]byte))
 }
 
+func Snmp_get_local_interface(snmp *gosnmp.GoSNMP, index string) string {
+	local_interface_oid := "1.3.6.1.4.1.9.9.23.1.1.1.1.6." + index
+	local_interface_list := []string{local_interface_oid}
+	res, err := snmp.Get(local_interface_list)
+	if err != nil {
+		log.Fatalf("Error while retrieve oid '%s' : .Reason : %v", local_interface_oid, err)
+	}
+
+	if len(res.Variables) == 0 {
+		log.Fatalf("Error while retrieving local_interface.")
+	}
+
+	b := res.Variables[0].Value.([]byte)
+
+	return string(b)
+}
+
+func Snmp_get_remote_hostname(snmp *gosnmp.GoSNMP, index string) string {
+	remote_hostname_oid := "1.3.6.1.4.1.9.9.23.1.2.1.1.6." + index
+	res, err := snmp.BulkWalkAll(remote_hostname_oid)
+	if err != nil {
+		log.Fatalf("Error while retrieving oid '%s' : .Reason : %v", remote_hostname_oid, err)
+	}
+
+	b := res[0].Value.([]byte)
+	return string(b)
+}
+
+func Snmp_get_remote_interface(snmp *gosnmp.GoSNMP, index string) string {
+	remote_interface_oid := "1.3.6.1.4.1.9.9.23.1.2.1.1.7." + index
+	res, err := snmp.BulkWalkAll(remote_interface_oid)
+	if err != nil {
+		log.Fatalf("Error while retrieving oid '%s' : .Reason : %v", remote_interface_oid, err)
+	}
+
+	b := res[0].Value.([]byte)
+	return string(b)
+}
+
 func Extract_ip(pdus []gosnmp.SnmpPDU) []string {
 	ips := make([]string, 0)
 	for _, pdu := range pdus {

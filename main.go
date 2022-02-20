@@ -21,7 +21,7 @@ type Fixture struct {
 	remote_interface string
 }
 
-func init_api() (api.Api, string) {
+func init_app() (api.Api, string, string) {
 	err := godotenv.Load()
 	if err != nil {
 		panic(err)
@@ -29,6 +29,13 @@ func init_api() (api.Api, string) {
 
 	zabbix_url := os.Getenv("ZABBIX_URL")
 	map_name := os.Getenv("ZABBIX_MAP_NAME")
+	router_ip := os.Getenv("ROUTER_IP")
+
+	if router_ip == "" {
+		log.Fatal("!! Env variable 'ROUTER_IP' not set !!")
+		fmt.Printf("Stopping the program...")
+		os.Exit(1)
+	}
 
 	api := api.Api{
 		Url:   zabbix_url,
@@ -36,22 +43,60 @@ func init_api() (api.Api, string) {
 	}
 	api.Token = api.Auth(os.Getenv("ZABBIX_USER"), os.Getenv("ZABBIX_USER_PASSWORD"))
 
-	return api, map_name
+	return api, map_name, router_ip
 }
 
-func build_map(routers []Fixture, Api api.Api, current_map api.Map) {
+func get_router_connections(router string) []snmp.Router {
+	err := godotenv.Load()
+	if err != nil {
+		panic(err)
+	}
+
+	SNMP_COMMUNITY := os.Getenv("SNMP_COMMUNITY")
+	SNMP_PORT := os.Getenv("SNMP_PORT")
+	snmp_port, _ := strconv.ParseUint(SNMP_PORT, 10, 16)
+	routers := []snmp.Router{}
+
+	Snmp := snmp.Snmp_init(router, uint16(snmp_port), SNMP_COMMUNITY)
+	defer Snmp.Conn.Close()
+
+	local_hostname := snmp.Snmp_get_local_hostname(Snmp)
+
+	remote_ip_oid := "1.3.6.1.4.1.9.9.23.1.2.1.1.4"
+	res, err := Snmp.BulkWalkAll(remote_ip_oid)
+	if err != nil {
+		log.Fatalf("Error while retrieving oid '%s' : .Reason : %v", remote_ip_oid, err)
+	}
+
+	indexes := snmp.Extract_index(res)
+	for _, index := range indexes {
+		router_info := snmp.Router{
+			Local_hostname: local_hostname,
+		}
+
+		router_info.Local_interface = snmp.Snmp_get_local_interface(Snmp, index)
+		router_info.Remote_hostname = snmp.Snmp_get_remote_hostname(Snmp, index)
+		router_info.Remote_interface = snmp.Snmp_get_remote_interface(Snmp, index)
+
+		routers = append(routers, router_info)
+	}
+
+	return routers
+}
+
+func build_map(routers []snmp.Router, Api api.Api, current_map api.Map) {
 
 	for _, router := range routers {
 		// fmt.Println(router)
 
-		local_hostid := Api.Host_get_id(router.local_hostname)
+		local_hostid := Api.Host_get_id(router.Local_hostname)
 		if len(local_hostid) == 0 {
-			fmt.Printf("Host : '%s' does not exist on the zabbix server.", router.local_hostname)
+			fmt.Printf("Host : '%s' does not exist on the zabbix server.", router.Local_hostname)
 			break
 		}
-		remote_hostid := Api.Host_get_id(router.remote_hostname)
+		remote_hostid := Api.Host_get_id(router.Remote_hostname)
 		if len(remote_hostid) == 0 {
-			fmt.Printf("Host : '%s' does not exist on the zabbix server.", router.remote_hostname)
+			fmt.Printf("Host : '%s' does not exist on the zabbix server.", router.Remote_hostname)
 			break
 		}
 
@@ -60,7 +105,7 @@ func build_map(routers []Fixture, Api api.Api, current_map api.Map) {
 
 		local_router_exist := Api.Map_selement_exist(current_map, local_router_hostid)
 		if local_router_exist == "" {
-			local_selement := Api.Map_build_selement(router.local_hostname, local_router_hostid)
+			local_selement := Api.Map_build_selement(router.Local_hostname, local_router_hostid)
 			current_map = Api.Map_add_selement(current_map, local_selement)
 		} else {
 			local_router_hostid = local_router_exist
@@ -68,20 +113,20 @@ func build_map(routers []Fixture, Api api.Api, current_map api.Map) {
 
 		remote_router_exist := Api.Map_selement_exist(current_map, remote_router_hostid)
 		if remote_router_exist == "" {
-			remote_selement := Api.Map_build_selement(router.remote_hostname, remote_router_hostid)
+			remote_selement := Api.Map_build_selement(router.Remote_hostname, remote_router_hostid)
 			current_map = Api.Map_add_selement(current_map, remote_selement)
 		} else {
 			remote_router_hostid = remote_router_exist
 		}
 
-		local_trigger := Api.Trigger_get_id(local_router_hostid, router.local_interface)
-		remote_trigger := Api.Trigger_get_id(remote_router_hostid, router.remote_interface)
+		local_trigger := Api.Trigger_get_id(local_router_hostid, router.Local_interface)
+		remote_trigger := Api.Trigger_get_id(remote_router_hostid, router.Remote_interface)
 
-		if !Api.Map_link_exist(current_map, router.local_interface, router.remote_interface, local_router_hostid, remote_router_hostid) {
+		if !Api.Map_link_exist(current_map, router.Local_interface, router.Remote_interface, local_router_hostid, remote_router_hostid) {
 			link := Api.Map_build_link(local_router_hostid,
 				remote_router_hostid,
-				router.local_interface,
-				router.remote_interface,
+				router.Local_interface,
+				router.Remote_interface,
 				local_trigger[0].Triggerid,
 				remote_trigger[0].Triggerid)
 
@@ -93,76 +138,32 @@ func build_map(routers []Fixture, Api api.Api, current_map api.Map) {
 }
 
 func main() {
-	// FIXTURES := make([]Fixture, 0)
-	// FIXTURES = append(FIXTURES, Fixture{
-	// 	local_hostname:   "routeur-1",
-	// 	local_interface:  "FastEthernet1/0",
-	// 	remote_hostname:  "routeur-2",
-	// 	remote_interface: "FastEthernet1/0",
-	// })
-	// FIXTURES = append(FIXTURES, Fixture{
-	// 	local_hostname:   "routeur-2",
-	// 	local_interface:  "FastEthernet2/0",
-	// 	remote_hostname:  "routeur-3",
-	// 	remote_interface: "FastEthernet2/0",
-	// })
-	// FIXTURES = append(FIXTURES, Fixture{
-	// 	local_hostname:   "routeur-2",
-	// 	local_interface:  "FastEthernet2/0",
-	// 	remote_hostname:  "routeur-3",
-	// 	remote_interface: "FastEthernet2/0",
-	// })
+	var Api, MAP_NAME, router_ip = init_app()
 
-	// var Api, MAP_NAME = init_api()
+	zabbix_map := Api.Map_get_by_name(MAP_NAME)
+	var map_id string
 
-	// zabbix_map := Api.Map_get_by_name(MAP_NAME)
-	// var map_id string
+	if len(zabbix_map) == 0 {
+		fmt.Println("Map not existing. Creating the map...")
+		map_id = Api.Map_create(MAP_NAME)
+	} else {
+		map_id = zabbix_map[0].Sysmapid
+	}
 
-	// if len(zabbix_map) == 0 {
-	// 	fmt.Println("Map not existing. Creating the map...")
-	// 	map_id = Api.Map_create(MAP_NAME)
-	// } else {
-	// 	map_id = zabbix_map[0].Sysmapid
-	// }
+	current_map := Api.Map_get_by_id(map_id)[0]
+	current_map.Selements = make([]api.Map_selement, 0)
+	current_map.Links = make([]api.Map_link, 0)
 
-	// current_map := Api.Map_get_by_id(map_id)[0]
-	// current_map.Selements = make([]api.Map_selement, 0)
-	// current_map.Links = make([]api.Map_link, 0)
-
-	// Api.Map_update(current_map)
-
-	// // ------------------------------------------------------------
-	// // 	Build_map function
-	// // ------------------------------------------------------------
-	// build_map(FIXTURES, Api, current_map)
+	Api.Map_update(current_map)
 
 	// ------------------------------------------------------------
 	// 	snmp function
 	// ------------------------------------------------------------
-	err := godotenv.Load()
-	if err != nil {
-		panic(err)
-	}
+	routeurs := get_router_connections(router_ip)
 
-	routeur := os.Getenv("R1")
-	SNMP_COMMUNITY := os.Getenv("SNMP_COMMUNITY")
-	SNMP_PORT := os.Getenv("SNMP_PORT")
-	snmp_port, _ := strconv.ParseUint(SNMP_PORT, 10, 16)
+	// ------------------------------------------------------------
+	// 	Build_map function
+	// ------------------------------------------------------------
+	build_map(routeurs, Api, current_map)
 
-	Snmp := snmp.Snmp_init(routeur, uint16(snmp_port), SNMP_COMMUNITY)
-	defer Snmp.Conn.Close()
-
-	local_hostname := snmp.Snmp_get_local_hostname(Snmp)
-	fmt.Println(local_hostname)
-
-	remote_ip_oid := "1.3.6.1.4.1.9.9.23.1.2.1.1.4"
-	res, err := Snmp.BulkWalkAll(remote_ip_oid)
-	if err != nil {
-		log.Fatalf("Error while retrieve oid '%s' : .Reason : %v", remote_ip_oid, err)
-	}
-
-	remote_ips := snmp.Extract_ip(res)
-	indexes := snmp.Extract_index(res)
-	fmt.Println(remote_ips)
-	fmt.Println(indexes)
 }

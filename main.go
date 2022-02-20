@@ -87,7 +87,6 @@ func get_router_connections(router string) []snmp.Router {
 func build_map(routers []snmp.Router, Api api.Api, current_map api.Map) {
 
 	for _, router := range routers {
-		// fmt.Println(router)
 
 		local_hostid := Api.Host_get_id(router.Local_hostname)
 		if len(local_hostid) == 0 {

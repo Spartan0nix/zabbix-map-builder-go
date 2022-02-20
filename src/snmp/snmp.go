@@ -31,7 +31,7 @@ func Snmp_get_local_hostname(snmp *gosnmp.GoSNMP) string {
 	local_hostname_oid := []string{"1.3.6.1.4.1.9.9.23.1.3.4.0"}
 	res, err := snmp.Get(local_hostname_oid)
 	if err != nil {
-		log.Fatalf("Error while retrieve oid '%s' : .Reason : %v", local_hostname_oid[0], err)
+		log.Fatalf("Error while retrieve oid '%s' for host '%s' : .Reason : %v", local_hostname_oid[0], snmp.Target, err)
 	}
 
 	if len(res.Variables) == 0 {

@@ -1,0 +1,116 @@
+{
+    "zabbix_export": {
+        "version": "6.0",
+        "date": "2023-04-30T08:47:07Z",
+        "groups": [
+            {
+                "uuid": "764b8522e9f443429839869af821748b",
+                "name": "Network devices"
+            }
+        ],
+        "hosts": [
+            {
+                "host": "router-1",
+                "name": "router-1",
+                "templates": [
+                    {
+                        "name": "Interfaces by SNMP"
+                    }
+                ],
+                "groups": [
+                    {
+                        "name": "Network devices"
+                    }
+                ],
+                "interfaces": [
+                    {
+                        "type": "SNMP",
+                        "useip": "NO",
+                        "ip": "",
+                        "dns": "router-1",
+                        "port": "1161",
+                        "details": {
+                            "community": "{$SNMP_COMMUNITY}"
+                        },
+                        "interface_ref": "if1"
+                    }
+                ],
+                "macros": [
+                    {
+                        "macro": "{$SNMP_COMMUNITY}",
+                        "value": "router-1"
+                    }
+                ],
+                "inventory_mode": "DISABLED"
+            },
+            {
+                "host": "router-2",
+                "name": "router-2",
+                "templates": [
+                    {
+                        "name": "Interfaces by SNMP"
+                    }
+                ],
+                "groups": [
+                    {
+                        "name": "Network devices"
+                    }
+                ],
+                "interfaces": [
+                    {
+                        "type": "SNMP",
+                        "useip": "NO",
+                        "ip": "",
+                        "dns": "router-2",
+                        "port": "1161",
+                        "details": {
+                            "community": "{$SNMP_COMMUNITY}"
+                        },
+                        "interface_ref": "if1"
+                    }
+                ],
+                "macros": [
+                    {
+                        "macro": "{$SNMP_COMMUNITY}",
+                        "value": "router-2"
+                    }
+                ],
+                "inventory_mode": "DISABLED"
+            },
+            {
+                "host": "router-3",
+                "name": "router-3",
+                "templates": [
+                    {
+                        "name": "Interfaces by SNMP"
+                    }
+                ],
+                "groups": [
+                    {
+                        "name": "Network devices"
+                    }
+                ],
+                "interfaces": [
+                    {
+                        "type": "SNMP",
+                        "useip": "NO",
+                        "ip": "",
+                        "dns": "router-3",
+                        "port": "1161",
+                        "details": {
+                            "community": "{$SNMP_COMMUNITY}"
+                        },
+                        "interface_ref": "if1"
+                    }
+                ],
+                "macros": [
+                    {
+                        "macro": "{$SNMP_COMMUNITY}",
+                        "value": "router-3"
+                    }
+                ],
+                "inventory_mode": "DISABLED"
+            }
+        ]
+    }
+}

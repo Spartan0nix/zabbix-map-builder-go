@@ -6,7 +6,7 @@ import (
 )
 
 // RunApp is used to run the main logic of the application.
-func RunApp(file string, env *Env, outFile string) error {
+func RunApp(file string, options *Options) error {
 	// Retrieve the list of hosts mappings for the input file
 	mappings, err := ReadInput(file)
 	if err != nil {
@@ -14,7 +14,7 @@ func RunApp(file string, env *Env, outFile string) error {
 	}
 
 	// Initialize an api client.
-	client, err := api.InitApi(env.ZabbixUrl, env.ZabbixUser, env.ZabbixPwd)
+	client, err := api.InitApi(options.ZabbixUrl, options.ZabbixUser, options.ZabbixPwd)
 	if err != nil {
 		return err
 	}
@@ -29,12 +29,27 @@ func RunApp(file string, env *Env, outFile string) error {
 		return err
 	}
 
-	m, err := zbxMap.BuildMap(client, mappings, hosts)
+	// Construct map options
+	mapOptions := zbxMap.MapOptions{
+		Name:         options.Name,
+		Color:        options.Color,
+		TriggerColor: options.TriggerColor,
+	}
+
+	// Validate the options
+	err = mapOptions.Validate()
 	if err != nil {
 		return err
 	}
 
-	err = zbxMap.CreateMap(client, m, outFile)
+	// Build the map create request
+	m, err := zbxMap.BuildMap(client, mappings, hosts, &mapOptions)
+	if err != nil {
+		return err
+	}
+
+	// Create the map using the previously build request
+	err = zbxMap.CreateMap(client, m, options.OutFile)
 	if err != nil {
 		return err
 	}

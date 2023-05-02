@@ -32,7 +32,7 @@ func getTriggerId(client *zabbixgosdk.ZabbixService, id string, pattern string) 
 }
 
 // addLink is used to a link between a remote and local hosts for a given mapping.
-func addLink(zbxMap *zabbixgosdk.MapCreateParameters, client *zabbixgosdk.ZabbixService, mapping *Mapping, hosts map[string]string) (*zabbixgosdk.MapCreateParameters, error) {
+func addLink(zbxMap *zabbixgosdk.MapCreateParameters, client *zabbixgosdk.ZabbixService, mapping *Mapping, hosts map[string]string, options *MapOptions) (*zabbixgosdk.MapCreateParameters, error) {
 	localTriggerId, err := getTriggerId(client, hosts[mapping.LocalHost], mapping.LocalTriggerPattern)
 	if err != nil {
 		return nil, err
@@ -46,12 +46,15 @@ func addLink(zbxMap *zabbixgosdk.MapCreateParameters, client *zabbixgosdk.Zabbix
 	link := zabbixgosdk.MapLink{
 		SelementId1: hosts[mapping.LocalHost],
 		SelementId2: hosts[mapping.RemoteHost],
+		Color:       options.Color,
 		LinkTriggers: []*zabbixgosdk.MapLinkTrigger{
 			{
 				TriggerId: localTriggerId,
+				Color:     options.TriggerColor,
 			},
 			{
 				TriggerId: remoteTriggerId,
+				Color:     options.TriggerColor,
 			},
 		},
 	}

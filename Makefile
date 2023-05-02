@@ -37,13 +37,25 @@ down:
 # CLI commands
 # ------------------------------------------------
 run:
-	go run main.go --file examples/mapping.json
+	go run main.go --name test-map-builder --file examples/mapping.json
 
 run-debug:
-	go run main.go --file examples/mapping.json --debug
+	go run main.go --name test-map-builder \
+		--file examples/mapping.json \
+		--output examples/output.json \
+		--debug
 
 run-outfile:
-	go run main.go --file examples/mapping.json --output examples/output.json
+	go run main.go --name test-map-builder \
+		--file examples/mapping.json \
+		--output examples/output.json
+
+run-color:
+	go run main.go --name test-map-builder \
+		--file examples/mapping.json \
+		--output examples/output.json \
+		--color 7AC2E1 \
+		--trigger-color EE445B
 
 # - HELPER
 help:

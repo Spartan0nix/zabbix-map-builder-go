@@ -8,15 +8,20 @@ import (
 	zbxMap "github.com/Spartan0nix/zabbix-map-builder-go/internal/map"
 )
 
-type Env struct {
-	ZabbixUrl  string
-	ZabbixUser string
-	ZabbixPwd  string
+type Options struct {
+	ZabbixUrl    string
+	ZabbixUser   string
+	ZabbixPwd    string
+	Name         string
+	OutFile      string
+	Color        string
+	TriggerColor string
+	StackHosts   bool
 }
 
 // GetEnvironmentVariables is used to retrive the required environment variables for the Zabbix API.
-func GetEnvironmentVariables() (*Env, error) {
-	vars := Env{}
+func GetEnvironmentVariables() (*Options, error) {
+	vars := Options{}
 
 	if vars.ZabbixUrl = os.Getenv("ZABBIX_URL"); vars.ZabbixUrl == "" {
 		return nil, fmt.Errorf("required environment variable 'ZABBIX_URL' is not set")

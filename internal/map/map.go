@@ -18,17 +18,53 @@ type Mapping struct {
 	RemoteTriggerPattern string `json:"remote_trigger_pattern"`
 }
 
+// MapOptions define the available options that can be passed to customize the map rendering.
+type MapOptions struct {
+	Name         string
+	Color        string
+	TriggerColor string
+}
+
+// Validate is used to validate options that will be passed to a map.
+func (o *MapOptions) Validate() error {
+	if o.Name == "" {
+		return fmt.Errorf("a name is required to create the map, used the 'name' flag to set one")
+	}
+
+	if o.Color == "" {
+		o.Color = "000000"
+	}
+
+	if o.TriggerColor == "" {
+		o.Color = "DD0000"
+	}
+
+	if o.Color != "000000" {
+		if err := validateHexa(o.Color); err != nil {
+			return err
+		}
+	}
+
+	if o.TriggerColor != "DD0000" {
+		if err := validateHexa(o.TriggerColor); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // BuildMap is used to build a map with the given mapping.
-func BuildMap(client *zabbixgosdk.ZabbixService, mappings []*Mapping, hosts map[string]string) (*zabbixgosdk.MapCreateParameters, error) {
+func BuildMap(client *zabbixgosdk.ZabbixService, mappings []*Mapping, hosts map[string]string, options *MapOptions) (*zabbixgosdk.MapCreateParameters, error) {
 	zbxMap := &zabbixgosdk.MapCreateParameters{}
-	zbxMap.Name = "test-map"
+	zbxMap.Name = options.Name
 	zbxMap.Width = "800"
 	zbxMap.Height = "800"
 	var err error
 
 	for _, mapping := range mappings {
 		zbxMap = addHosts(zbxMap, mapping, hosts)
-		zbxMap, err = addLink(zbxMap, client, mapping, hosts)
+		zbxMap, err = addLink(zbxMap, client, mapping, hosts, options)
 		if err != nil {
 			return nil, err
 		}

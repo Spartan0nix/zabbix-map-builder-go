@@ -50,7 +50,7 @@ func getLevel(level LogLevel) string {
 }
 
 // setFlags is used to set the logger flags based on the given log level.
-func (l *Logger) setFlags(level LogLevel) {
+func (l *Logger) setFlags() {
 	l.logger.SetFlags(log.Lmsgprefix)
 }
 
@@ -59,17 +59,16 @@ func (l *Logger) writeLog(level LogLevel, v ...any) {
 	// Do not write log if the level is not configured
 	if level <= l.Level {
 		// Set the logger flags
-		l.setFlags(level)
-
+		l.setFlags()
 		// Retrieve the string representation of the log level
 		strLevel := getLevel(level)
+
+		// Configure the logger prefix
+		l.logger.SetPrefix(fmt.Sprintf("[map-builder][%s] ", strLevel))
 
 		// For critical level, log all data to the shell and
 		// execute panic function on the last entry
 		if level == Critical {
-			// Configure the logger prefix
-			l.logger.SetPrefix(fmt.Sprintf("[map-builder][%s] ", strLevel))
-
 			// Directly use panic function if only one entry was passed
 			if len(v) == 1 {
 				panic(v[0])
@@ -83,8 +82,6 @@ func (l *Logger) writeLog(level LogLevel, v ...any) {
 			panic(v[len(v)-1])
 
 		} else {
-			// Configure the logger prefix
-			l.logger.SetPrefix(fmt.Sprintf("[map-builder][%s] ", strLevel))
 			// Log all entries to the shell
 			for _, entry := range v {
 				l.logger.Println(entry)

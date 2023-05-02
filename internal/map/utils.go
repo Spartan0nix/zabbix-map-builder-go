@@ -1,6 +1,7 @@
 package _map
 
 import (
+	"fmt"
 	"strconv"
 
 	zabbixgosdk "github.com/Spartan0nix/zabbix-go-sdk/v2"
@@ -20,7 +21,7 @@ func elementExist(id string, elements []*zabbixgosdk.MapElement) bool {
 // validateHexa is used to validate that the given string is in hexadecimal format.
 func validateHexa(h string) error {
 	if string(h[0]) == "#" {
-		h = h[:1]
+		return fmt.Errorf("hexadecimal color should not start with a '#', value parsed '%s'", h)
 	}
 
 	_, err := strconv.ParseUint(h, 16, 64)

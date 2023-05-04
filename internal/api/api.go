@@ -66,6 +66,16 @@ func InitApi(url string, user string, password string) (*zabbixgosdk.ZabbixServi
 	return client, nil
 }
 
+// Logout is used to release the API token retrieve during the intialization of the API client.
+func Logout(client *zabbixgosdk.ZabbixService) error {
+	err := client.Logout()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // GetHostsId is used to retrive the id of the given hosts.
 // The hosts name must be set as key in the map.
 // Map value for each key will be replace by the id of the host retrieve from the Zabbix server.

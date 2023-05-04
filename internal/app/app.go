@@ -19,6 +19,11 @@ func RunApp(file string, options *Options) error {
 		return err
 	}
 
+	// Catch logout error
+	defer func() {
+		err = client.Logout()
+	}()
+
 	// Remove duplicate for the hosts mappings
 	// Make it easier to retrieve id of each hosts
 	hosts := getUniqueHosts(mappings)
@@ -54,5 +59,6 @@ func RunApp(file string, options *Options) error {
 		return err
 	}
 
-	return nil
+	// Allow to return errors from the defer function (API logout)
+	return err
 }

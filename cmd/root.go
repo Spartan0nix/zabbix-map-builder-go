@@ -15,9 +15,10 @@ var File string
 var OutFile string
 var Color string
 var TriggerColor string
-var StackHosts bool
+var StackHosts []bool
 var GlobalLogger *logging.Logger
 var Debug bool
+var DryRun bool
 
 func init() {
 	rootCmd.PersistentFlags().StringVar(&Name, "name", "", "name of map")
@@ -25,8 +26,9 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&OutFile, "output", "o", "", "output the parameters used to create the map")
 	rootCmd.PersistentFlags().StringVarP(&Color, "color", "c", "000000", "color in hexadecimal used for the links between each hosts")
 	rootCmd.PersistentFlags().StringVar(&TriggerColor, "trigger-color", "DD0000", "color in hexadecimal used for the links between each hosts when a trigger is in problem state")
-	rootCmd.PersistentFlags().BoolVar(&StackHosts, "stack-hosts", false, "connect multiple links to a single host. If set to false, if mapping will have is own hosts. This can be useful for infrastructure with redundant connexion")
+	rootCmd.PersistentFlags().BoolSliceVar(&StackHosts, "stack-hosts", []bool{true}, "connect multiple links to a single host. If set to false, if mapping will have is own hosts. This can be useful for infrastructure with redundant connexion")
 	rootCmd.PersistentFlags().BoolVarP(&Debug, "debug", "v", false, "enable debug logging verbosity")
+	rootCmd.PersistentFlags().BoolVar(&DryRun, "dry-run", false, "output to the shell the map definition without created it on the server")
 
 	rootCmd.MarkPersistentFlagRequired("name")
 	rootCmd.MarkPersistentFlagRequired("file")
@@ -59,8 +61,9 @@ var rootCmd = &cobra.Command{
 		options.Name = Name
 		options.OutFile = OutFile
 		options.Color = Color
-		options.StackHosts = StackHosts
+		options.StackHosts = StackHosts[0]
 		options.TriggerColor = TriggerColor
+		options.DryRun = DryRun
 
 		// Run the application.
 		err = app.RunApp(File, options)

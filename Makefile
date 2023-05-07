@@ -57,6 +57,22 @@ run-color:
 		--color 7AC2E1 \
 		--trigger-color EE445B
 
+run-dry:
+	go run main.go --name test-map-builder \
+		--file examples/mapping.json \
+		--output examples/output.json \
+		--color 7AC2E1 \
+		--trigger-color EE445B \
+		--dry-run
+
+run-unstack-hosts:
+	go run main.go --name test-map-builder \
+		--file examples/mapping.json \
+		--output examples/output.json \
+		--color 7AC2E1 \
+		--trigger-color EE445B \
+		--stack-hosts false
+
 # - HELPER
 help:
 	go run main.go --help

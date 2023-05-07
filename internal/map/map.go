@@ -1,9 +1,7 @@
 package _map
 
 import (
-	"encoding/json"
 	"fmt"
-	"os"
 
 	zabbixgosdk "github.com/Spartan0nix/zabbix-go-sdk/v2"
 )
@@ -23,6 +21,7 @@ type MapOptions struct {
 	Name         string
 	Color        string
 	TriggerColor string
+	StackHosts   bool
 }
 
 // Validate is used to validate options that will be passed to a map.
@@ -54,17 +53,76 @@ func (o *MapOptions) Validate() error {
 	return nil
 }
 
+// buildElementId is used to update the local and remote elements id based on the number of hosts that already exists with the same id.
+// Used only is --stack-hosts is set to false.
+func buildElementsId(zbxMap *zabbixgosdk.MapCreateParameters, localElementId string, remoteElementId string) (string, string) {
+	localCount := 0
+	remoteCount := 0
+
+	for _, element := range zbxMap.Elements {
+		elementId := element.Elements.([]zabbixgosdk.MapElementHost)[0].Id
+
+		if elementId == localElementId {
+			localCount++
+		}
+		if elementId == remoteElementId {
+			remoteCount++
+		}
+	}
+
+	if localCount > 0 {
+		localElementId = fmt.Sprintf("%s-%d", localElementId, localCount+1)
+	}
+
+	if remoteCount > 0 {
+		remoteElementId = fmt.Sprintf("%s-%d", remoteElementId, remoteCount+1)
+	}
+
+	return localElementId, remoteElementId
+}
+
 // BuildMap is used to build a map with the given mapping.
 func BuildMap(client *zabbixgosdk.ZabbixService, mappings []*Mapping, hosts map[string]string, options *MapOptions) (*zabbixgosdk.MapCreateParameters, error) {
 	zbxMap := &zabbixgosdk.MapCreateParameters{}
 	zbxMap.Name = options.Name
 	zbxMap.Width = "800"
 	zbxMap.Height = "800"
-	var err error
 
+	// Loop over each mapping
 	for _, mapping := range mappings {
-		zbxMap = addHosts(zbxMap, mapping, hosts)
-		zbxMap, err = addLink(zbxMap, client, mapping, hosts, options)
+		localElementId := hosts[mapping.LocalHost]
+		remoteElementId := hosts[mapping.RemoteHost]
+
+		// If hosts should not be stacked, update the elementsId by appending '-<number-of-element-already-present + 1>'
+		if !options.StackHosts {
+			localElementId, remoteElementId = buildElementsId(zbxMap, localElementId, remoteElementId)
+		}
+
+		// Add the hosts to the map
+		zbxMap = addHosts(zbxMap, localElementId, hosts[mapping.LocalHost])
+		zbxMap = addHosts(zbxMap, remoteElementId, hosts[mapping.RemoteHost])
+
+		// Retriev the triggers id based on the given pattern for each hosts
+		localTriggerId, err := getTriggerId(client, hosts[mapping.LocalHost], mapping.LocalTriggerPattern)
+		if err != nil {
+			return nil, err
+		}
+
+		remoteTriggerId, err := getTriggerId(client, hosts[mapping.RemoteHost], mapping.RemoteTriggerPattern)
+		if err != nil {
+			return nil, err
+		}
+
+		// Add the link to the map
+		zbxMap, err = addLink(zbxMap, &linkParameters{
+			localElement:     localElementId,
+			localTrigger:     localTriggerId,
+			remoteElement:    remoteElementId,
+			remoteTrigger:    remoteTriggerId,
+			linkColor:        options.Color,
+			triggerLinkColor: options.TriggerColor,
+		})
+
 		if err != nil {
 			return nil, err
 		}
@@ -75,7 +133,7 @@ func BuildMap(client *zabbixgosdk.ZabbixService, mappings []*Mapping, hosts map[
 
 // CreateMap is used to create the given map.
 // The map create parameters can also be exported to a file if a file path is specified.
-func CreateMap(client *zabbixgosdk.ZabbixService, m *zabbixgosdk.MapCreateParameters, file string) error {
+func CreateMap(client *zabbixgosdk.ZabbixService, m *zabbixgosdk.MapCreateParameters) error {
 	res, err := client.Map.Create(m)
 	if err != nil {
 		return err
@@ -83,25 +141,6 @@ func CreateMap(client *zabbixgosdk.ZabbixService, m *zabbixgosdk.MapCreateParame
 
 	if res == nil || len(res.MapIds) == 0 {
 		return fmt.Errorf("an empty response was returned when creating the map")
-	}
-
-	if file != "" {
-		b, err := json.Marshal(m)
-		if err != nil {
-			return err
-		}
-
-		f, err := os.Create(file)
-		if err != nil {
-			return err
-		}
-
-		defer f.Close()
-
-		_, err = f.Write(b)
-		if err != nil {
-			return err
-		}
 	}
 
 	return nil

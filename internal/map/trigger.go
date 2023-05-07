@@ -31,30 +31,30 @@ func getTriggerId(client *zabbixgosdk.ZabbixService, id string, pattern string) 
 	return t[0].Id, nil
 }
 
+// linkParameters define the parameters required to create a map link between two hosts.s
+type linkParameters struct {
+	localElement     string
+	localTrigger     string
+	remoteElement    string
+	remoteTrigger    string
+	linkColor        string
+	triggerLinkColor string
+}
+
 // addLink is used to a link between a remote and local hosts for a given mapping.
-func addLink(zbxMap *zabbixgosdk.MapCreateParameters, client *zabbixgosdk.ZabbixService, mapping *Mapping, hosts map[string]string, options *MapOptions) (*zabbixgosdk.MapCreateParameters, error) {
-	localTriggerId, err := getTriggerId(client, hosts[mapping.LocalHost], mapping.LocalTriggerPattern)
-	if err != nil {
-		return nil, err
-	}
-
-	remoteTriggerId, err := getTriggerId(client, hosts[mapping.RemoteHost], mapping.RemoteTriggerPattern)
-	if err != nil {
-		return nil, err
-	}
-
+func addLink(zbxMap *zabbixgosdk.MapCreateParameters, p *linkParameters) (*zabbixgosdk.MapCreateParameters, error) {
 	link := zabbixgosdk.MapLink{
-		SelementId1: hosts[mapping.LocalHost],
-		SelementId2: hosts[mapping.RemoteHost],
-		Color:       options.Color,
+		SelementId1: p.localElement,
+		SelementId2: p.remoteElement,
+		Color:       p.linkColor,
 		LinkTriggers: []*zabbixgosdk.MapLinkTrigger{
 			{
-				TriggerId: localTriggerId,
-				Color:     options.TriggerColor,
+				TriggerId: p.localTrigger,
+				Color:     p.triggerLinkColor,
 			},
 			{
-				TriggerId: remoteTriggerId,
-				Color:     options.TriggerColor,
+				TriggerId: p.remoteTrigger,
+				Color:     p.triggerLinkColor,
 			},
 		},
 	}

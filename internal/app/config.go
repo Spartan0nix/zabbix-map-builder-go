@@ -17,6 +17,7 @@ type Options struct {
 	Color        string
 	TriggerColor string
 	StackHosts   bool
+	DryRun       bool
 }
 
 // GetEnvironmentVariables is used to retrive the required environment variables for the Zabbix API.

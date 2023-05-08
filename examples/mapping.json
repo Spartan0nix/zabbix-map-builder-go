@@ -3,16 +3,20 @@
         "local_host": "router-1",
         "local_interface": "eth0",
         "local_trigger_pattern": "Interface eth0(): Link down",
+        "local_image": "Firewall_(64)",
         "remote_host": "router-2",
         "remote_interface": "eth0",
-        "remote_trigger_pattern": "Interface eth0(): Link down"
+        "remote_trigger_pattern": "Interface eth0(): Link down",
+        "remote_image": "Switch_(64)"
     },
     {
         "local_host": "router-1",
         "local_interface": "eth1",
         "local_trigger_pattern": "Interface eth1(): Link down",
+        "local_image": "Firewall_(64)",
         "remote_host": "router-3",
         "remote_interface": "eth1",
-        "remote_trigger_pattern": "Interface eth1(): Link down"
+        "remote_trigger_pattern": "Interface eth1(): Link down",
+        "remote_image": "Switch_(64)"
     }
 ]

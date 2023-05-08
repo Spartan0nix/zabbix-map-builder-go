@@ -54,12 +54,16 @@ func RunApp(file string, options *Options) error {
 		err = client.Logout()
 	}()
 
-	// Remove duplicate for the hosts mappings
+	// Remove duplicate from the hosts mappings and associate 'host' -> 'hostid'
 	// Make it easier to retrieve id of each hosts
-	hosts := getUniqueHosts(mappings)
+	hosts, err := getUniqueHosts(client, mappings)
+	if err != nil {
+		return err
+	}
 
-	// Retrieve the id of each hosts and provide a mapping 'host' -> 'Zabbix id'
-	hosts, err = api.GetHostsId(client, hosts)
+	// Remove duplicate from the hosts mappings and associate 'image' -> 'imageid'
+	// Make it easier to retrieve id of each hosts
+	images, err := getUniqueImages(client, mappings)
 	if err != nil {
 		return err
 	}
@@ -70,6 +74,9 @@ func RunApp(file string, options *Options) error {
 		Color:        options.Color,
 		TriggerColor: options.TriggerColor,
 		StackHosts:   options.StackHosts,
+		Mappings:     mappings,
+		Hosts:        hosts,
+		Images:       images,
 	}
 
 	// Validate the options
@@ -79,7 +86,7 @@ func RunApp(file string, options *Options) error {
 	}
 
 	// Build the map create request
-	m, err := zbxmap.BuildMap(client, mappings, hosts, &mapOptions)
+	m, err := zbxmap.BuildMap(client, &mapOptions)
 	if err != nil {
 		return err
 	}

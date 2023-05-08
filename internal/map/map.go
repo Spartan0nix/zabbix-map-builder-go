@@ -11,9 +11,11 @@ type Mapping struct {
 	LocalHost            string `json:"local_host"`
 	LocalInterface       string `json:"local_interface"`
 	LocalTriggerPattern  string `json:"local_trigger_pattern"`
+	LocalImage           string `json:"local_image"`
 	RemoteHost           string `json:"remote_host"`
 	RemoteInterface      string `json:"remote_interface"`
 	RemoteTriggerPattern string `json:"remote_trigger_pattern"`
+	RemoteImage          string `json:"remote_image"`
 }
 
 // MapOptions define the available options that can be passed to customize the map rendering.
@@ -22,6 +24,9 @@ type MapOptions struct {
 	Color        string
 	TriggerColor string
 	StackHosts   bool
+	Mappings     []*Mapping
+	Hosts        map[string]string
+	Images       map[string]string
 }
 
 // Validate is used to validate options that will be passed to a map.
@@ -48,6 +53,18 @@ func (o *MapOptions) Validate() error {
 		if err := validateHexa(o.TriggerColor); err != nil {
 			return err
 		}
+	}
+
+	if o.Mappings == nil {
+		return fmt.Errorf("no mappings were passed to the build function")
+	}
+
+	if o.Hosts == nil {
+		return fmt.Errorf("no mapping 'host' -> 'hostid' was passed to the build function")
+	}
+
+	if o.Images == nil {
+		return fmt.Errorf("no images were passed to the build function")
 	}
 
 	return nil
@@ -82,16 +99,16 @@ func buildElementsId(zbxMap *zabbixgosdk.MapCreateParameters, localElementId str
 }
 
 // BuildMap is used to build a map with the given mapping.
-func BuildMap(client *zabbixgosdk.ZabbixService, mappings []*Mapping, hosts map[string]string, options *MapOptions) (*zabbixgosdk.MapCreateParameters, error) {
+func BuildMap(client *zabbixgosdk.ZabbixService, options *MapOptions) (*zabbixgosdk.MapCreateParameters, error) {
 	zbxMap := &zabbixgosdk.MapCreateParameters{}
 	zbxMap.Name = options.Name
 	zbxMap.Width = "800"
 	zbxMap.Height = "800"
 
 	// Loop over each mapping
-	for _, mapping := range mappings {
-		localElementId := hosts[mapping.LocalHost]
-		remoteElementId := hosts[mapping.RemoteHost]
+	for _, mapping := range options.Mappings {
+		localElementId := options.Hosts[mapping.LocalHost]
+		remoteElementId := options.Hosts[mapping.RemoteHost]
 
 		// If hosts should not be stacked, update the elementsId by appending '-<number-of-element-already-present + 1>'
 		if !options.StackHosts {
@@ -99,16 +116,16 @@ func BuildMap(client *zabbixgosdk.ZabbixService, mappings []*Mapping, hosts map[
 		}
 
 		// Add the hosts to the map
-		zbxMap = addHosts(zbxMap, localElementId, hosts[mapping.LocalHost])
-		zbxMap = addHosts(zbxMap, remoteElementId, hosts[mapping.RemoteHost])
+		zbxMap = addHosts(zbxMap, localElementId, options.Hosts[mapping.LocalHost], options.Images[mapping.LocalImage])
+		zbxMap = addHosts(zbxMap, remoteElementId, options.Hosts[mapping.RemoteHost], options.Images[mapping.RemoteImage])
 
 		// Retriev the triggers id based on the given pattern for each hosts
-		localTriggerId, err := getTriggerId(client, hosts[mapping.LocalHost], mapping.LocalTriggerPattern)
+		localTriggerId, err := getTriggerId(client, options.Hosts[mapping.LocalHost], mapping.LocalTriggerPattern)
 		if err != nil {
 			return nil, err
 		}
 
-		remoteTriggerId, err := getTriggerId(client, hosts[mapping.RemoteHost], mapping.RemoteTriggerPattern)
+		remoteTriggerId, err := getTriggerId(client, options.Hosts[mapping.RemoteHost], mapping.RemoteTriggerPattern)
 		if err != nil {
 			return nil, err
 		}

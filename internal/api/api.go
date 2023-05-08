@@ -106,3 +106,34 @@ func GetHostsId(client *zabbixgosdk.ZabbixService, hosts map[string]string) (map
 
 	return hosts, nil
 }
+
+// GetImagesId is used to retrive the id of the given images.
+// The images name must be set as key in the map.
+// Map value for each key will be replace by the id of the host retrieve from the Zabbix server.
+func GetImagesId(client *zabbixgosdk.ZabbixService, images map[string]string) (map[string]string, error) {
+	imagesName := utils.GetMapKey(images)
+
+	i, err := client.Image.Get(&zabbixgosdk.ImageGetParameters{
+		Output: []string{
+			"imageid",
+			"name",
+		},
+		Filter: map[string][]string{
+			"name": imagesName,
+		},
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	for _, image := range i {
+		if _, exist := images[image.Name]; !exist {
+			return nil, fmt.Errorf("missing key for image '%s'", image.Name)
+		}
+
+		images[image.Name] = image.ImageId
+	}
+
+	return images, nil
+}

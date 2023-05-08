@@ -98,7 +98,7 @@ func GetHostsId(client *zabbixgosdk.ZabbixService, hosts map[string]string) (map
 
 	for _, host := range h {
 		if _, exist := hosts[host.Host]; !exist {
-			return nil, fmt.Errorf("missing key for host '%s'", host.Host)
+			return nil, fmt.Errorf("unknown key '%s'", host.Host)
 		}
 
 		hosts[host.Host] = host.HostId

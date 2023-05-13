@@ -40,7 +40,7 @@ func (o *MapOptions) Validate() error {
 	}
 
 	if o.TriggerColor == "" {
-		o.Color = "DD0000"
+		o.TriggerColor = "DD0000"
 	}
 
 	if o.Color != "000000" {
@@ -131,7 +131,7 @@ func BuildMap(client *zabbixgosdk.ZabbixService, options *MapOptions) (*zabbixgo
 		}
 
 		// Add the link to the map
-		zbxMap, err = addLink(zbxMap, &linkParameters{
+		zbxMap = addLink(zbxMap, &linkParameters{
 			localElement:     localElementId,
 			localTrigger:     localTriggerId,
 			remoteElement:    remoteElementId,
@@ -139,10 +139,6 @@ func BuildMap(client *zabbixgosdk.ZabbixService, options *MapOptions) (*zabbixgo
 			linkColor:        options.Color,
 			triggerLinkColor: options.TriggerColor,
 		})
-
-		if err != nil {
-			return nil, err
-		}
 	}
 
 	return zbxMap, nil

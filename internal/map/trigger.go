@@ -7,13 +7,13 @@ import (
 )
 
 // getTriggerId is used to retrive the triggerId for a given host with a specific pattern (used to filtrer the description field).
-func getTriggerId(client *zabbixgosdk.ZabbixService, id string, pattern string) (string, error) {
+func getTriggerId(client *zabbixgosdk.ZabbixService, hostId string, pattern string) (string, error) {
 	t, err := client.Trigger.Get(&zabbixgosdk.TriggerGetParameters{
 		Output: []string{
 			"triggerid",
 		},
 		HostIds: []string{
-			id,
+			hostId,
 		},
 		Filter: map[string]string{
 			"description": pattern,
@@ -25,7 +25,7 @@ func getTriggerId(client *zabbixgosdk.ZabbixService, id string, pattern string) 
 	}
 
 	if len(t) > 1 {
-		return "", fmt.Errorf("more than one trigger was found for the host '%s' with the given pattern '%s'", id, pattern)
+		return "", fmt.Errorf("more than one trigger was found for the host '%s' with the given pattern '%s'", hostId, pattern)
 	}
 
 	return t[0].Id, nil
@@ -42,7 +42,7 @@ type linkParameters struct {
 }
 
 // addLink is used to a link between a remote and local hosts for a given mapping.
-func addLink(zbxMap *zabbixgosdk.MapCreateParameters, p *linkParameters) (*zabbixgosdk.MapCreateParameters, error) {
+func addLink(zbxMap *zabbixgosdk.MapCreateParameters, p *linkParameters) *zabbixgosdk.MapCreateParameters {
 	link := zabbixgosdk.MapLink{
 		SelementId1: p.localElement,
 		SelementId2: p.remoteElement,
@@ -61,5 +61,5 @@ func addLink(zbxMap *zabbixgosdk.MapCreateParameters, p *linkParameters) (*zabbi
 
 	zbxMap.Links = append(zbxMap.Links, &link)
 
-	return zbxMap, nil
+	return zbxMap
 }

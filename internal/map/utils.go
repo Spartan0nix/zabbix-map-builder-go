@@ -24,6 +24,10 @@ func validateHexa(h string) error {
 		return fmt.Errorf("hexadecimal color should not start with a '#', value parsed '%s'", h)
 	}
 
+	if len(h) > 6 {
+		return fmt.Errorf("maximum length for hexadecimal color is 6, the given value length is %d", len(h))
+	}
+
 	_, err := strconv.ParseUint(h, 16, 64)
 	if err != nil {
 		return err

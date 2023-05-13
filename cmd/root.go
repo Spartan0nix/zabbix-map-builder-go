@@ -93,8 +93,8 @@ func checkRequiredFlag(name string, file string) {
 		os.Exit(1)
 	}
 
-	if _, err := os.Stat(File); err != nil {
-		GlobalLogger.Error(fmt.Sprintf("error while reading file '%s'.", File), err)
+	if _, err := os.Stat(file); err != nil {
+		GlobalLogger.Error(fmt.Sprintf("error while reading file '%s'.", file), err)
 		os.Exit(1)
 	}
 }

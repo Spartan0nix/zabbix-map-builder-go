@@ -29,6 +29,8 @@ func TestInitService(t *testing.T) {
 		t.Fatalf("error while executing initService function.\nReason : %v", err)
 	}
 
+	defer c.Logout()
+
 	if c == nil {
 		t.Fatalf("an nil pointer was returned instead of *zabbixgosdk.ZabbixService")
 	}
@@ -48,7 +50,6 @@ func TestInitService(t *testing.T) {
 
 func TestInitServiceFailConnectivity(t *testing.T) {
 	c, err := initService("http://localhost:1234/api_jsonrpc.php")
-
 	if err == nil {
 		t.Fatalf("an error should be returned when the server is unreachable")
 	}
@@ -63,6 +64,8 @@ func TestAuthenticate(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error while executing initService function.\nReason : %v", err)
 	}
+
+	defer c.Logout()
 
 	err = authenticate(c, ZABBIX_USER, ZABBIX_PWD)
 	if err != nil {
@@ -84,6 +87,8 @@ func TestAuthenticateFail(t *testing.T) {
 		t.Fatalf("error while executing initService function.\nReason : %v", err)
 	}
 
+	defer c.Logout()
+
 	err = authenticate(c, "random-user", "random-password")
 	if err == nil {
 		t.Fatalf("error should be returned when the authentification failed")
@@ -95,6 +100,8 @@ func TestInitApi(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error while executing InitApi function.\nReason : %v", err)
 	}
+
+	defer c.Logout()
 
 	if c == nil {
 		t.Fatalf("an nil pointer was returned instead of *zabbixgosdk.ZabbixService")

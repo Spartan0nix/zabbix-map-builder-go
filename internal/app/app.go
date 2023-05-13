@@ -11,8 +11,8 @@ import (
 )
 
 func outputToFile(file string, m *zabbixgosdk.MapCreateParameters) error {
-	if file != "" {
-		return nil
+	if file == "" {
+		return fmt.Errorf("file name cannot be empty")
 	}
 
 	b, err := json.Marshal(m)

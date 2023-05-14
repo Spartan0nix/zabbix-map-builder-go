@@ -40,7 +40,7 @@ func init() {
 var rootCmd = &cobra.Command{
 	Use:   "",
 	Short: "Build a zabbix map using the given host mapping.",
-	Long:  "This CLI tool is used to help administrator build a zabbix map using the given host mapping (network devices, etc.).",
+	Long:  "This CLI tool is used to help administrator build a zabbix map using the given host mappings (network devices, etc.).",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		// Check if the file flag was set correctly.
 		checkRequiredFlag(Name, File)

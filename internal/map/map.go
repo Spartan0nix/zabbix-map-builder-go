@@ -9,11 +9,11 @@ import (
 // Mapping define the properties used to create an hosts mapping on a Zabbix map.
 type Mapping struct {
 	LocalHost            string `json:"local_host"`
-	LocalInterface       string `json:"local_interface"`
+	LocalInterface       string `json:"local_interface,omitempty"`
 	LocalTriggerPattern  string `json:"local_trigger_pattern"`
 	LocalImage           string `json:"local_image"`
 	RemoteHost           string `json:"remote_host"`
-	RemoteInterface      string `json:"remote_interface"`
+	RemoteInterface      string `json:"remote_interface,omitempty"`
 	RemoteTriggerPattern string `json:"remote_trigger_pattern"`
 	RemoteImage          string `json:"remote_image"`
 }

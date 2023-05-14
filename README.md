@@ -48,6 +48,11 @@ The value needs to be the name of the host on Zabbix for the search query to mat
 Name of the host interface attached to the other host.
 This field is currently not utilize.
 
+***\*_trigger_pattern :***
+
+Pattern used to search a trigger configured for the host. 
+This trigger will then be attached to the link between the two hosts.
+
 ***\*_image :***
 
 Name of the image used for the host.
@@ -60,9 +65,11 @@ The value needs to be the name of the image on Zabbix for the search query to ma
 Export files are available in the *examples* folder.
 
 - Hosts
+
 The *'zbx_export_hosts.json'* export will create hosts that can be utilize with the *'docker-compose.yml'* file.
 
 - Mappings
+
 The *'mapping.json'* file can be used to create an example map.
 
 > Using the *docker-compose.test.yml* stack combine with the export files can give you a good preview of the possibilities available with this CLI tool.

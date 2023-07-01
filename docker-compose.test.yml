@@ -1,4 +1,7 @@
 services:
+  # -------------------------------------
+  # Zabbix Server
+  # -------------------------------------
   testing-postgres:
     image: docker.io/postgres:13.8-alpine3.16
     container_name: postgres
@@ -6,6 +9,7 @@ services:
       - POSTGRES_USER=zabbix
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=zabbix
+  
   testing-zabbix-server:
     image: docker.io/zabbix/zabbix-server-pgsql:alpine-6.0-latest
     container_name: zabbix-server
@@ -13,6 +17,7 @@ services:
       - DB_SERVER_HOST=postgres
       - POSTGRES_USER=zabbix
       - POSTGRES_PASSWORD=password
+  
   testing-zabbix-web:
     image: docker.io/zabbix/zabbix-web-nginx-pgsql:alpine-6.0-latest
     container_name: zabbix-web
@@ -24,3 +29,26 @@ services:
       - POSTGRES_PASSWORD=password
       - ZBX_SERVER_HOST=zabbix-server
       - PHP_TZ=Europe/Paris
+  # -------------------------------------
+  # Routers
+  # -------------------------------------
+  router-1:
+    build: ./build/router
+    container_name: router-1
+    restart: unless-stopped
+    volumes:
+      - ./examples/data/router-1.snmprec:/data/router-1.snmprec
+
+  router-2:
+    build: ./build/router
+    container_name: router-2
+    restart: unless-stopped
+    volumes:
+      - ./examples/data/router-2.snmprec:/data/router-2.snmprec
+
+  router-3:
+    build: ./build/router
+    container_name: router-3
+    restart: unless-stopped
+    volumes:
+      - ./examples/data/router-3.snmprec:/data/router-3.snmprec

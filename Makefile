@@ -80,6 +80,9 @@ help:
 # ------------------------------------------------
 # Tests
 # ------------------------------------------------
+create-hosts:
+	ZABBIX_URL="http://localhost:4444/api_jsonrpc.php" ZABBIX_USER="Admin" ZABBIX_PWD="zabbix" go run examples/import.go --file examples/zbx_export_hosts.json
+
 test:
 	@echo "Running container stack..."
 	docker compose -f ./docker-compose.test.yml up -d
@@ -92,6 +95,8 @@ test:
 		sleep 1; \
 		i=$$((i+1)); \
 	done;
+	@echo "Import hosts configuration..."
+	make create-hosts
 	@echo "Running test..."
 	go test ./...
 	@echo "Destroying container stack"
@@ -109,6 +114,8 @@ coverage:
 		sleep 1; \
 		i=$$((i+1)); \
 	done;
+	@echo "Import hosts configuration..."
+	make create-hosts
 	@echo "Running test..."
 	go test -coverprofile=coverage.out ./...
 	@echo "Formatting coverage report to HTML..."
@@ -122,3 +129,8 @@ down-test:
 clean-test-cache:
 	go clean -testcache
 
+local-test:
+	go test ./... -count=1
+
+local-test-debug:
+	go test ./... -count=1 -v

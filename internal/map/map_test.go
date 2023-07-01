@@ -1,7 +1,10 @@
 package _map
 
 import (
+	"fmt"
+	"math/rand"
 	"testing"
+	"time"
 
 	zabbixgosdk "github.com/Spartan0nix/zabbix-go-sdk/v2"
 )
@@ -11,6 +14,14 @@ const (
 	ZABBIX_USER = "Admin"
 	ZABBIX_PWD  = "zabbix"
 )
+
+// generateMapName is used to generate a random name for each map created during test.
+func generateMapName() string {
+	rand.Seed(time.Now().UnixNano())
+	value := rand.Intn(rand.Intn(9999))
+
+	return fmt.Sprintf("test-map-builder-%d", value)
+}
 
 func TestValidate(t *testing.T) {
 	opts := MapOptions{
@@ -259,7 +270,7 @@ func TestCreateMap(t *testing.T) {
 		Map: zabbixgosdk.Map{
 			Height: "800",
 			Width:  "800",
-			Name:   "test-map-builder",
+			Name:   generateMapName(),
 		},
 	})
 

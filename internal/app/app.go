@@ -38,12 +38,14 @@ func outputToFile(file string, m *zabbixgosdk.MapCreateParameters) error {
 // RunApp is used to run the main logic of the application.
 func RunApp(file string, options *Options) error {
 	// Retrieve the list of hosts mappings for the input file
+	// fmt.Println("reading input file")
 	mappings, err := ReadInput(file)
 	if err != nil {
 		return err
 	}
 
 	// Initialize an api client.
+	// fmt.Println("initializing API client")
 	client, err := api.InitApi(options.ZabbixUrl, options.ZabbixUser, options.ZabbixPwd)
 	if err != nil {
 		return err
@@ -56,6 +58,7 @@ func RunApp(file string, options *Options) error {
 
 	// Remove duplicate from the hosts mappings and associate 'host' -> 'hostid'
 	// Make it easier to retrieve id of each hosts
+	// fmt.Println("retrieving the list of hosts")
 	hosts, err := getUniqueHosts(client, mappings)
 	if err != nil {
 		return err
@@ -63,12 +66,14 @@ func RunApp(file string, options *Options) error {
 
 	// Remove duplicate from the hosts mappings and associate 'image' -> 'imageid'
 	// Make it easier to retrieve id of each hosts
+	// fmt.Println("retrieving the list of images")
 	images, err := getUniqueImages(client, mappings)
 	if err != nil {
 		return err
 	}
 
 	// Construct map options
+	// fmt.Println("building map options")
 	mapOptions := zbxmap.MapOptions{
 		Name:         options.Name,
 		Color:        options.Color,
@@ -80,12 +85,14 @@ func RunApp(file string, options *Options) error {
 	}
 
 	// Validate the options
+	// fmt.Println("validating map options")
 	err = mapOptions.Validate()
 	if err != nil {
 		return err
 	}
 
 	// Build the map create request
+	// fmt.Println("build the map")
 	m, err := zbxmap.BuildMap(client, &mapOptions)
 	if err != nil {
 		return err

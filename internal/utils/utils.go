@@ -4,7 +4,7 @@ package utils
 func GetMapKey(m map[string]string) []string {
 	out := make([]string, 0)
 
-	for key, _ := range m {
+	for key := range m {
 		out = append(out, key)
 	}
 

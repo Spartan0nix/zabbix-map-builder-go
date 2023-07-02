@@ -112,6 +112,8 @@ create-hosts:
 	ZABBIX_URL="http://localhost:4444/api_jsonrpc.php" ZABBIX_USER="Admin" ZABBIX_PWD="zabbix" go run examples/import.go --file examples/zbx_export_hosts.json
 
 test:
+	@echo "Cleaning go test cache"
+	make clean-test-cache
 	@echo "Running container stack..."
 	docker compose -f ./docker-compose.test.yml up -d
 	@TIMER=40; \
@@ -131,6 +133,8 @@ test:
 	docker compose -f ./docker-compose.test.yml down
 
 coverage:
+	@echo "Cleaning go test cache"
+	make clean-test-cache
 	@echo "Running container stack..."
 	docker compose -f ./docker-compose.test.yml up -d
 	@TIMER=40; \

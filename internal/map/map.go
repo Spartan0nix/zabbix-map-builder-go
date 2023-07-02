@@ -23,6 +23,8 @@ type MapOptions struct {
 	Name         string
 	Color        string
 	TriggerColor string
+	Height       string
+	Width        string
 	StackHosts   bool
 	Mappings     []*Mapping
 	Hosts        map[string]string
@@ -102,8 +104,8 @@ func buildElementsId(zbxMap *zabbixgosdk.MapCreateParameters, localElementId str
 func BuildMap(client *zabbixgosdk.ZabbixService, options *MapOptions) (*zabbixgosdk.MapCreateParameters, error) {
 	zbxMap := &zabbixgosdk.MapCreateParameters{}
 	zbxMap.Name = options.Name
-	zbxMap.Width = "800"
-	zbxMap.Height = "800"
+	zbxMap.Height = options.Height
+	zbxMap.Width = options.Width
 
 	// Loop over each mapping
 	for _, mapping := range options.Mappings {

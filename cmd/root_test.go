@@ -43,7 +43,7 @@ func TestExecute(t *testing.T) {
 		// Set the required arguments
 		os.Args = append(os.Args, "--name", generateMapName())
 		os.Args = append(os.Args, "--file", mappingFilePath)
-		os.Args = append(os.Args, "--color", "7AC2E1", "--trigger-color", "EE445B")
+		os.Args = append(os.Args, "--color", "7AC2E1", "--trigger-color", "EE445B", "--width", "400", "--height", "400")
 		Execute()
 
 		return

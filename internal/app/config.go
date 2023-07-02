@@ -16,6 +16,8 @@ type Options struct {
 	OutFile      string
 	Color        string
 	TriggerColor string
+	Height       string
+	Width        string
 	StackHosts   bool
 	DryRun       bool
 }

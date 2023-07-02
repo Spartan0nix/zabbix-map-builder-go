@@ -69,6 +69,8 @@ func TestRunApp(t *testing.T) {
 		Name:         generateMapName(),
 		Color:        "7AC2E1",
 		TriggerColor: "EE445B",
+		Width:        "400",
+		Height:       "400",
 	}
 
 	err := RunApp(mappingFilePath, &opts, nil)
@@ -93,6 +95,8 @@ func TestRunAppDryRun(t *testing.T) {
 		Name:         generateMapName(),
 		Color:        "7AC2E1",
 		TriggerColor: "EE445B",
+		Height:       "800",
+		Width:        "800",
 		DryRun:       true,
 	}
 
@@ -135,6 +139,8 @@ func TestRunAppOutFile(t *testing.T) {
 		Name:         generateMapName(),
 		Color:        "7AC2E1",
 		TriggerColor: "EE445B",
+		Height:       "800",
+		Width:        "800",
 		OutFile:      outFile,
 	}
 
@@ -169,12 +175,9 @@ func TestRunAppFailReadInput(t *testing.T) {
 func TestRunAppFailInitApi(t *testing.T) {
 	// Set the required arguments
 	opts := Options{
-		ZabbixUrl:    "http://localhost:6666/api_jsonrpc.php",
-		ZabbixUser:   ZABBIX_USER,
-		ZabbixPwd:    ZABBIX_PWD,
-		Name:         "test-map-builder_should-not-exist",
-		Color:        "7AC2E1",
-		TriggerColor: "EE445B",
+		ZabbixUrl:  "http://localhost:6666/api_jsonrpc.php",
+		ZabbixUser: ZABBIX_USER,
+		ZabbixPwd:  ZABBIX_PWD,
 	}
 
 	err := RunApp(mappingFilePath, &opts, nil)

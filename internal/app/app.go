@@ -83,6 +83,8 @@ func RunApp(file string, options *Options, logger *logging.Logger) error {
 		Name:         options.Name,
 		Color:        options.Color,
 		TriggerColor: options.TriggerColor,
+		Height:       options.Height,
+		Width:        options.Width,
 		StackHosts:   options.StackHosts,
 		Mappings:     mappings,
 		Hosts:        hosts,

@@ -92,7 +92,7 @@ echo "[INFO] Extracting archive"
 tar -C $TMP_INSTALL_DIR -xzf $TMP_INSTALL_ARCHIVE_PATH
 
 echo "[INFO] Moving binary to '$INSTALL_DIR'"
-sudo mv "$TMP_INSTALL_DIR/zabbix-map-builder" /usr/local/bin
+sudo mv "$TMP_INSTALL_DIR/zabbix-map-builder-go" /usr/local/bin/zabbix-map-builder
 
 echo "[INFO] Updating permissions"
 sudo chown $(id -un):$(id -gn) /usr/local/bin/zabbix-map-builder

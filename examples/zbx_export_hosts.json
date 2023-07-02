@@ -1,0 +1,1252 @@
+{
+    "zabbix_export": {
+        "version": "6.0",
+        "date": "2023-06-28T19:16:28Z",
+        "groups": [
+            {
+                "uuid": "36bff6c29af64692839d077febfc7079",
+                "name": "Templates/Network devices"
+            }
+        ],
+        "hosts": [
+            {
+                "host": "router-1",
+                "name": "router-1",
+                "groups": [
+                    {
+                        "name": "Templates/Network devices"
+                    }
+                ],
+                "interfaces": [
+                    {
+                        "type": "SNMP",
+                        "useip": "NO",
+                        "ip": "",
+                        "dns": "router-1",
+                        "port": "1161",
+                        "details": {
+                            "community": "{$SNMP_COMMUNITY}"
+                        },
+                        "interface_ref": "if1"
+                    }
+                ],
+                "items": [
+                    {
+                        "name": "Interface eth0(): Bits received",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "1.3.6.1.2.1.31.1.1.1.6.1",
+                        "key": "net.if.in[ifHCInOctets.1]",
+                        "delay": "3m",
+                        "history": "7d",
+                        "units": "bps",
+                        "description": "MIB: IF-MIB\nThe total number of octets received on the interface, including framing characters. This object is a 64-bit version of ifInOctets. Discontinuities in the value of this counter can occur at re-initialization of the management system, and at other times as indicated by the value of ifCounterDiscontinuityTime.",
+                        "preprocessing": [
+                            {
+                                "type": "CHANGE_PER_SECOND",
+                                "parameters": [
+                                    ""
+                                ]
+                            },
+                            {
+                                "type": "MULTIPLIER",
+                                "parameters": [
+                                    "8"
+                                ]
+                            }
+                        ],
+                        "interface_ref": "if1",
+                        "tags": [
+                            {
+                                "tag": "component",
+                                "value": "network"
+                            },
+                            {
+                                "tag": "interface",
+                                "value": "eth0"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Interface eth1(): Bits received",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "1.3.6.1.2.1.31.1.1.1.6.2",
+                        "key": "net.if.in[ifHCInOctets.2]",
+                        "delay": "3m",
+                        "history": "7d",
+                        "units": "bps",
+                        "description": "MIB: IF-MIB\nThe total number of octets received on the interface, including framing characters. This object is a 64-bit version of ifInOctets. Discontinuities in the value of this counter can occur at re-initialization of the management system, and at other times as indicated by the value of ifCounterDiscontinuityTime.",
+                        "preprocessing": [
+                            {
+                                "type": "CHANGE_PER_SECOND",
+                                "parameters": [
+                                    ""
+                                ]
+                            },
+                            {
+                                "type": "MULTIPLIER",
+                                "parameters": [
+                                    "8"
+                                ]
+                            }
+                        ],
+                        "interface_ref": "if1",
+                        "tags": [
+                            {
+                                "tag": "component",
+                                "value": "network"
+                            },
+                            {
+                                "tag": "interface",
+                                "value": "eth1"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Interface eth0(): Bits sent",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "1.3.6.1.2.1.31.1.1.1.10.1",
+                        "key": "net.if.out[ifHCOutOctets.1]",
+                        "delay": "3m",
+                        "history": "7d",
+                        "units": "bps",
+                        "description": "MIB: IF-MIB\nThe total number of octets transmitted out of the interface, including framing characters. This object is a 64-bit version of ifOutOctets.Discontinuities in the value of this counter can occur at re-initialization of the management system, and at other times as indicated by the value of ifCounterDiscontinuityTime.",
+                        "preprocessing": [
+                            {
+                                "type": "CHANGE_PER_SECOND",
+                                "parameters": [
+                                    ""
+                                ]
+                            },
+                            {
+                                "type": "MULTIPLIER",
+                                "parameters": [
+                                    "8"
+                                ]
+                            }
+                        ],
+                        "interface_ref": "if1",
+                        "tags": [
+                            {
+                                "tag": "component",
+                                "value": "network"
+                            },
+                            {
+                                "tag": "interface",
+                                "value": "eth0"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Interface eth1(): Bits sent",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "1.3.6.1.2.1.31.1.1.1.10.2",
+                        "key": "net.if.out[ifHCOutOctets.2]",
+                        "delay": "3m",
+                        "history": "7d",
+                        "units": "bps",
+                        "description": "MIB: IF-MIB\nThe total number of octets transmitted out of the interface, including framing characters. This object is a 64-bit version of ifOutOctets.Discontinuities in the value of this counter can occur at re-initialization of the management system, and at other times as indicated by the value of ifCounterDiscontinuityTime.",
+                        "preprocessing": [
+                            {
+                                "type": "CHANGE_PER_SECOND",
+                                "parameters": [
+                                    ""
+                                ]
+                            },
+                            {
+                                "type": "MULTIPLIER",
+                                "parameters": [
+                                    "8"
+                                ]
+                            }
+                        ],
+                        "interface_ref": "if1",
+                        "tags": [
+                            {
+                                "tag": "component",
+                                "value": "network"
+                            },
+                            {
+                                "tag": "interface",
+                                "value": "eth1"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Interface eth0(): Speed",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "1.3.6.1.2.1.31.1.1.1.15.1",
+                        "key": "net.if.speed[ifHighSpeed.1]",
+                        "delay": "5m",
+                        "history": "7d",
+                        "trends": "0",
+                        "units": "bps",
+                        "description": "MIB: IF-MIB\nAn estimate of the interface's current bandwidth in units of 1,000,000 bits per second. If this object reports a value of `n' then the speed of the interface is somewhere in the range of `n-500,000' to`n+499,999'.  For interfaces which do not vary in bandwidth or for those where no accurate estimation can be made, this object should contain the nominal bandwidth. For a sub-layer which has no concept of bandwidth, this object should be zero.",
+                        "preprocessing": [
+                            {
+                                "type": "MULTIPLIER",
+                                "parameters": [
+                                    "1000000"
+                                ]
+                            },
+                            {
+                                "type": "DISCARD_UNCHANGED_HEARTBEAT",
+                                "parameters": [
+                                    "1h"
+                                ]
+                            }
+                        ],
+                        "interface_ref": "if1",
+                        "tags": [
+                            {
+                                "tag": "component",
+                                "value": "network"
+                            },
+                            {
+                                "tag": "interface",
+                                "value": "eth0"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Interface eth1(): Speed",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "1.3.6.1.2.1.31.1.1.1.15.2",
+                        "key": "net.if.speed[ifHighSpeed.2]",
+                        "delay": "5m",
+                        "history": "7d",
+                        "trends": "0",
+                        "units": "bps",
+                        "description": "MIB: IF-MIB\nAn estimate of the interface's current bandwidth in units of 1,000,000 bits per second. If this object reports a value of `n' then the speed of the interface is somewhere in the range of `n-500,000' to`n+499,999'.  For interfaces which do not vary in bandwidth or for those where no accurate estimation can be made, this object should contain the nominal bandwidth. For a sub-layer which has no concept of bandwidth, this object should be zero.",
+                        "preprocessing": [
+                            {
+                                "type": "MULTIPLIER",
+                                "parameters": [
+                                    "1000000"
+                                ]
+                            },
+                            {
+                                "type": "DISCARD_UNCHANGED_HEARTBEAT",
+                                "parameters": [
+                                    "1h"
+                                ]
+                            }
+                        ],
+                        "interface_ref": "if1",
+                        "tags": [
+                            {
+                                "tag": "component",
+                                "value": "network"
+                            },
+                            {
+                                "tag": "interface",
+                                "value": "eth1"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Interface eth0(): Operational status",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "1.3.6.1.2.1.2.2.1.8.1",
+                        "key": "net.if.status[ifOperStatus.1]",
+                        "history": "7d",
+                        "trends": "0",
+                        "description": "MIB: IF-MIB\nThe current operational state of the interface.\n- The testing(3) state indicates that no operational packet scan be passed\n- If ifAdminStatus is down(2) then ifOperStatus should be down(2)\n- If ifAdminStatus is changed to up(1) then ifOperStatus should change to up(1) if the interface is ready to transmit and receive network traffic\n- It should change todormant(5) if the interface is waiting for external actions (such as a serial line waiting for an incoming connection)\n- It should remain in the down(2) state if and only if there is a fault that prevents it from going to the up(1) state\n- It should remain in the notPresent(6) state if the interface has missing(typically, hardware) components.",
+                        "valuemap": {
+                            "name": "IF-MIB::ifOperStatus"
+                        },
+                        "interface_ref": "if1",
+                        "tags": [
+                            {
+                                "tag": "component",
+                                "value": "network"
+                            },
+                            {
+                                "tag": "interface",
+                                "value": "eth0"
+                            }
+                        ],
+                        "triggers": [
+                            {
+                                "expression": "{$IFCONTROL:\"eth0\"}=1 and last(/router-1/net.if.status[ifOperStatus.1])=2 and (last(/router-1/net.if.status[ifOperStatus.1],#1)<>last(/router-1/net.if.status[ifOperStatus.1],#2))",
+                                "recovery_mode": "RECOVERY_EXPRESSION",
+                                "recovery_expression": "last(/router-1/net.if.status[ifOperStatus.1])<>2 or {$IFCONTROL:\"eth0\"}=0",
+                                "name": "Interface eth0(): Link down",
+                                "opdata": "Current state: {ITEM.LASTVALUE1}",
+                                "priority": "AVERAGE",
+                                "description": "This trigger expression works as follows:\n1. Can be triggered if operations status is down.\n2. {$IFCONTROL:\"eth0\"}=1 - user can redefine Context macro to value - 0. That marks this interface as not important. No new trigger will be fired if this interface is down.\n3. {TEMPLATE_NAME:METRIC.diff()}=1) - trigger fires only if operational status was up(1) sometime before. (So, do not fire 'ethernal off' interfaces.)\n\nWARNING: if closed manually - won't fire again on next poll, because of .diff.",
+                                "manual_close": "YES",
+                                "tags": [
+                                    {
+                                        "tag": "scope",
+                                        "value": "availability"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Interface eth1(): Operational status",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "1.3.6.1.2.1.2.2.1.8.2",
+                        "key": "net.if.status[ifOperStatus.2]",
+                        "history": "7d",
+                        "trends": "0",
+                        "description": "MIB: IF-MIB\nThe current operational state of the interface.\n- The testing(3) state indicates that no operational packet scan be passed\n- If ifAdminStatus is down(2) then ifOperStatus should be down(2)\n- If ifAdminStatus is changed to up(1) then ifOperStatus should change to up(1) if the interface is ready to transmit and receive network traffic\n- It should change todormant(5) if the interface is waiting for external actions (such as a serial line waiting for an incoming connection)\n- It should remain in the down(2) state if and only if there is a fault that prevents it from going to the up(1) state\n- It should remain in the notPresent(6) state if the interface has missing(typically, hardware) components.",
+                        "valuemap": {
+                            "name": "IF-MIB::ifOperStatus"
+                        },
+                        "interface_ref": "if1",
+                        "tags": [
+                            {
+                                "tag": "component",
+                                "value": "network"
+                            },
+                            {
+                                "tag": "interface",
+                                "value": "eth1"
+                            }
+                        ],
+                        "triggers": [
+                            {
+                                "expression": "{$IFCONTROL:\"eth1\"}=1 and last(/router-1/net.if.status[ifOperStatus.2])=2 and (last(/router-1/net.if.status[ifOperStatus.2],#1)<>last(/router-1/net.if.status[ifOperStatus.2],#2))",
+                                "recovery_mode": "RECOVERY_EXPRESSION",
+                                "recovery_expression": "last(/router-1/net.if.status[ifOperStatus.2])<>2 or {$IFCONTROL:\"eth1\"}=0",
+                                "name": "Interface eth1(): Link down",
+                                "opdata": "Current state: {ITEM.LASTVALUE1}",
+                                "priority": "AVERAGE",
+                                "description": "This trigger expression works as follows:\n1. Can be triggered if operations status is down.\n2. {$IFCONTROL:\"eth1\"}=1 - user can redefine Context macro to value - 0. That marks this interface as not important. No new trigger will be fired if this interface is down.\n3. {TEMPLATE_NAME:METRIC.diff()}=1) - trigger fires only if operational status was up(1) sometime before. (So, do not fire 'ethernal off' interfaces.)\n\nWARNING: if closed manually - won't fire again on next poll, because of .diff.",
+                                "manual_close": "YES",
+                                "tags": [
+                                    {
+                                        "tag": "scope",
+                                        "value": "availability"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "macros": [
+                    {
+                        "macro": "{$IF.UTIL.MAX}",
+                        "value": "90"
+                    },
+                    {
+                        "macro": "{$IFCONTROL}",
+                        "value": "1"
+                    },
+                    {
+                        "macro": "{$SNMP_COMMUNITY}",
+                        "value": "router-1"
+                    }
+                ],
+                "inventory_mode": "DISABLED",
+                "valuemaps": [
+                    {
+                        "name": "IF-MIB::ifOperStatus",
+                        "mappings": [
+                            {
+                                "value": "1",
+                                "newvalue": "up"
+                            },
+                            {
+                                "value": "2",
+                                "newvalue": "down"
+                            },
+                            {
+                                "value": "4",
+                                "newvalue": "unknown"
+                            },
+                            {
+                                "value": "5",
+                                "newvalue": "dormant"
+                            },
+                            {
+                                "value": "6",
+                                "newvalue": "notPresent"
+                            },
+                            {
+                                "value": "7",
+                                "newvalue": "lowerLayerDown"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "host": "router-2",
+                "name": "router-2",
+                "groups": [
+                    {
+                        "name": "Templates/Network devices"
+                    }
+                ],
+                "interfaces": [
+                    {
+                        "type": "SNMP",
+                        "useip": "NO",
+                        "ip": "",
+                        "dns": "router-2",
+                        "port": "1161",
+                        "details": {
+                            "community": "{$SNMP_COMMUNITY}"
+                        },
+                        "interface_ref": "if1"
+                    }
+                ],
+                "items": [
+                    {
+                        "name": "Interface eth0(): Bits received",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "1.3.6.1.2.1.31.1.1.1.6.1",
+                        "key": "net.if.in[ifHCInOctets.1]",
+                        "delay": "3m",
+                        "history": "7d",
+                        "units": "bps",
+                        "description": "MIB: IF-MIB\nThe total number of octets received on the interface, including framing characters. This object is a 64-bit version of ifInOctets. Discontinuities in the value of this counter can occur at re-initialization of the management system, and at other times as indicated by the value of ifCounterDiscontinuityTime.",
+                        "preprocessing": [
+                            {
+                                "type": "CHANGE_PER_SECOND",
+                                "parameters": [
+                                    ""
+                                ]
+                            },
+                            {
+                                "type": "MULTIPLIER",
+                                "parameters": [
+                                    "8"
+                                ]
+                            }
+                        ],
+                        "interface_ref": "if1",
+                        "tags": [
+                            {
+                                "tag": "component",
+                                "value": "network"
+                            },
+                            {
+                                "tag": "interface",
+                                "value": "eth0"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Interface eth1(): Bits received",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "1.3.6.1.2.1.31.1.1.1.6.2",
+                        "key": "net.if.in[ifHCInOctets.2]",
+                        "delay": "3m",
+                        "history": "7d",
+                        "units": "bps",
+                        "description": "MIB: IF-MIB\nThe total number of octets received on the interface, including framing characters. This object is a 64-bit version of ifInOctets. Discontinuities in the value of this counter can occur at re-initialization of the management system, and at other times as indicated by the value of ifCounterDiscontinuityTime.",
+                        "preprocessing": [
+                            {
+                                "type": "CHANGE_PER_SECOND",
+                                "parameters": [
+                                    ""
+                                ]
+                            },
+                            {
+                                "type": "MULTIPLIER",
+                                "parameters": [
+                                    "8"
+                                ]
+                            }
+                        ],
+                        "interface_ref": "if1",
+                        "tags": [
+                            {
+                                "tag": "component",
+                                "value": "network"
+                            },
+                            {
+                                "tag": "interface",
+                                "value": "eth1"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Interface eth0(): Bits sent",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "1.3.6.1.2.1.31.1.1.1.10.1",
+                        "key": "net.if.out[ifHCOutOctets.1]",
+                        "delay": "3m",
+                        "history": "7d",
+                        "units": "bps",
+                        "description": "MIB: IF-MIB\nThe total number of octets transmitted out of the interface, including framing characters. This object is a 64-bit version of ifOutOctets.Discontinuities in the value of this counter can occur at re-initialization of the management system, and at other times as indicated by the value of ifCounterDiscontinuityTime.",
+                        "preprocessing": [
+                            {
+                                "type": "CHANGE_PER_SECOND",
+                                "parameters": [
+                                    ""
+                                ]
+                            },
+                            {
+                                "type": "MULTIPLIER",
+                                "parameters": [
+                                    "8"
+                                ]
+                            }
+                        ],
+                        "interface_ref": "if1",
+                        "tags": [
+                            {
+                                "tag": "component",
+                                "value": "network"
+                            },
+                            {
+                                "tag": "interface",
+                                "value": "eth0"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Interface eth1(): Bits sent",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "1.3.6.1.2.1.31.1.1.1.10.2",
+                        "key": "net.if.out[ifHCOutOctets.2]",
+                        "delay": "3m",
+                        "history": "7d",
+                        "units": "bps",
+                        "description": "MIB: IF-MIB\nThe total number of octets transmitted out of the interface, including framing characters. This object is a 64-bit version of ifOutOctets.Discontinuities in the value of this counter can occur at re-initialization of the management system, and at other times as indicated by the value of ifCounterDiscontinuityTime.",
+                        "preprocessing": [
+                            {
+                                "type": "CHANGE_PER_SECOND",
+                                "parameters": [
+                                    ""
+                                ]
+                            },
+                            {
+                                "type": "MULTIPLIER",
+                                "parameters": [
+                                    "8"
+                                ]
+                            }
+                        ],
+                        "interface_ref": "if1",
+                        "tags": [
+                            {
+                                "tag": "component",
+                                "value": "network"
+                            },
+                            {
+                                "tag": "interface",
+                                "value": "eth1"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Interface eth0(): Speed",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "1.3.6.1.2.1.31.1.1.1.15.1",
+                        "key": "net.if.speed[ifHighSpeed.1]",
+                        "delay": "5m",
+                        "history": "7d",
+                        "trends": "0",
+                        "units": "bps",
+                        "description": "MIB: IF-MIB\nAn estimate of the interface's current bandwidth in units of 1,000,000 bits per second. If this object reports a value of `n' then the speed of the interface is somewhere in the range of `n-500,000' to`n+499,999'.  For interfaces which do not vary in bandwidth or for those where no accurate estimation can be made, this object should contain the nominal bandwidth. For a sub-layer which has no concept of bandwidth, this object should be zero.",
+                        "preprocessing": [
+                            {
+                                "type": "MULTIPLIER",
+                                "parameters": [
+                                    "1000000"
+                                ]
+                            },
+                            {
+                                "type": "DISCARD_UNCHANGED_HEARTBEAT",
+                                "parameters": [
+                                    "1h"
+                                ]
+                            }
+                        ],
+                        "interface_ref": "if1",
+                        "tags": [
+                            {
+                                "tag": "component",
+                                "value": "network"
+                            },
+                            {
+                                "tag": "interface",
+                                "value": "eth0"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Interface eth1(): Speed",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "1.3.6.1.2.1.31.1.1.1.15.2",
+                        "key": "net.if.speed[ifHighSpeed.2]",
+                        "delay": "5m",
+                        "history": "7d",
+                        "trends": "0",
+                        "units": "bps",
+                        "description": "MIB: IF-MIB\nAn estimate of the interface's current bandwidth in units of 1,000,000 bits per second. If this object reports a value of `n' then the speed of the interface is somewhere in the range of `n-500,000' to`n+499,999'.  For interfaces which do not vary in bandwidth or for those where no accurate estimation can be made, this object should contain the nominal bandwidth. For a sub-layer which has no concept of bandwidth, this object should be zero.",
+                        "preprocessing": [
+                            {
+                                "type": "MULTIPLIER",
+                                "parameters": [
+                                    "1000000"
+                                ]
+                            },
+                            {
+                                "type": "DISCARD_UNCHANGED_HEARTBEAT",
+                                "parameters": [
+                                    "1h"
+                                ]
+                            }
+                        ],
+                        "interface_ref": "if1",
+                        "tags": [
+                            {
+                                "tag": "component",
+                                "value": "network"
+                            },
+                            {
+                                "tag": "interface",
+                                "value": "eth1"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Interface eth0(): Operational status",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "1.3.6.1.2.1.2.2.1.8.1",
+                        "key": "net.if.status[ifOperStatus.1]",
+                        "history": "7d",
+                        "trends": "0",
+                        "description": "MIB: IF-MIB\nThe current operational state of the interface.\n- The testing(3) state indicates that no operational packet scan be passed\n- If ifAdminStatus is down(2) then ifOperStatus should be down(2)\n- If ifAdminStatus is changed to up(1) then ifOperStatus should change to up(1) if the interface is ready to transmit and receive network traffic\n- It should change todormant(5) if the interface is waiting for external actions (such as a serial line waiting for an incoming connection)\n- It should remain in the down(2) state if and only if there is a fault that prevents it from going to the up(1) state\n- It should remain in the notPresent(6) state if the interface has missing(typically, hardware) components.",
+                        "valuemap": {
+                            "name": "IF-MIB::ifOperStatus"
+                        },
+                        "interface_ref": "if1",
+                        "tags": [
+                            {
+                                "tag": "component",
+                                "value": "network"
+                            },
+                            {
+                                "tag": "interface",
+                                "value": "eth0"
+                            }
+                        ],
+                        "triggers": [
+                            {
+                                "expression": "{$IFCONTROL:\"eth0\"}=1 and last(/router-2/net.if.status[ifOperStatus.1])=2 and (last(/router-2/net.if.status[ifOperStatus.1],#1)<>last(/router-2/net.if.status[ifOperStatus.1],#2))",
+                                "recovery_mode": "RECOVERY_EXPRESSION",
+                                "recovery_expression": "last(/router-2/net.if.status[ifOperStatus.1])<>2 or {$IFCONTROL:\"eth0\"}=0",
+                                "name": "Interface eth0(): Link down",
+                                "opdata": "Current state: {ITEM.LASTVALUE1}",
+                                "priority": "AVERAGE",
+                                "description": "This trigger expression works as follows:\n1. Can be triggered if operations status is down.\n2. {$IFCONTROL:\"eth0\"}=1 - user can redefine Context macro to value - 0. That marks this interface as not important. No new trigger will be fired if this interface is down.\n3. {TEMPLATE_NAME:METRIC.diff()}=1) - trigger fires only if operational status was up(1) sometime before. (So, do not fire 'ethernal off' interfaces.)\n\nWARNING: if closed manually - won't fire again on next poll, because of .diff.",
+                                "manual_close": "YES",
+                                "tags": [
+                                    {
+                                        "tag": "scope",
+                                        "value": "availability"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Interface eth1(): Operational status",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "1.3.6.1.2.1.2.2.1.8.2",
+                        "key": "net.if.status[ifOperStatus.2]",
+                        "history": "7d",
+                        "trends": "0",
+                        "description": "MIB: IF-MIB\nThe current operational state of the interface.\n- The testing(3) state indicates that no operational packet scan be passed\n- If ifAdminStatus is down(2) then ifOperStatus should be down(2)\n- If ifAdminStatus is changed to up(1) then ifOperStatus should change to up(1) if the interface is ready to transmit and receive network traffic\n- It should change todormant(5) if the interface is waiting for external actions (such as a serial line waiting for an incoming connection)\n- It should remain in the down(2) state if and only if there is a fault that prevents it from going to the up(1) state\n- It should remain in the notPresent(6) state if the interface has missing(typically, hardware) components.",
+                        "valuemap": {
+                            "name": "IF-MIB::ifOperStatus"
+                        },
+                        "interface_ref": "if1",
+                        "tags": [
+                            {
+                                "tag": "component",
+                                "value": "network"
+                            },
+                            {
+                                "tag": "interface",
+                                "value": "eth1"
+                            }
+                        ],
+                        "triggers": [
+                            {
+                                "expression": "{$IFCONTROL:\"eth1\"}=1 and last(/router-2/net.if.status[ifOperStatus.2])=2 and (last(/router-2/net.if.status[ifOperStatus.2],#1)<>last(/router-2/net.if.status[ifOperStatus.2],#2))",
+                                "recovery_mode": "RECOVERY_EXPRESSION",
+                                "recovery_expression": "last(/router-2/net.if.status[ifOperStatus.2])<>2 or {$IFCONTROL:\"eth1\"}=0",
+                                "name": "Interface eth1(): Link down",
+                                "opdata": "Current state: {ITEM.LASTVALUE1}",
+                                "priority": "AVERAGE",
+                                "description": "This trigger expression works as follows:\n1. Can be triggered if operations status is down.\n2. {$IFCONTROL:\"eth1\"}=1 - user can redefine Context macro to value - 0. That marks this interface as not important. No new trigger will be fired if this interface is down.\n3. {TEMPLATE_NAME:METRIC.diff()}=1) - trigger fires only if operational status was up(1) sometime before. (So, do not fire 'ethernal off' interfaces.)\n\nWARNING: if closed manually - won't fire again on next poll, because of .diff.",
+                                "manual_close": "YES",
+                                "tags": [
+                                    {
+                                        "tag": "scope",
+                                        "value": "availability"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "macros": [
+                    {
+                        "macro": "{$IF.UTIL.MAX}",
+                        "value": "90"
+                    },
+                    {
+                        "macro": "{$IFCONTROL}",
+                        "value": "1"
+                    },
+                    {
+                        "macro": "{$SNMP_COMMUNITY}",
+                        "value": "router-2"
+                    }
+                ],
+                "inventory_mode": "DISABLED",
+                "valuemaps": [
+                    {
+                        "name": "IF-MIB::ifOperStatus",
+                        "mappings": [
+                            {
+                                "value": "1",
+                                "newvalue": "up"
+                            },
+                            {
+                                "value": "2",
+                                "newvalue": "down"
+                            },
+                            {
+                                "value": "4",
+                                "newvalue": "unknown"
+                            },
+                            {
+                                "value": "5",
+                                "newvalue": "dormant"
+                            },
+                            {
+                                "value": "6",
+                                "newvalue": "notPresent"
+                            },
+                            {
+                                "value": "7",
+                                "newvalue": "lowerLayerDown"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "host": "router-3",
+                "name": "router-3",
+                "groups": [
+                    {
+                        "name": "Templates/Network devices"
+                    }
+                ],
+                "interfaces": [
+                    {
+                        "type": "SNMP",
+                        "useip": "NO",
+                        "ip": "",
+                        "dns": "router-3",
+                        "port": "1161",
+                        "details": {
+                            "community": "{$SNMP_COMMUNITY}"
+                        },
+                        "interface_ref": "if1"
+                    }
+                ],
+                "items": [
+                    {
+                        "name": "Interface eth0(): Bits received",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "1.3.6.1.2.1.31.1.1.1.6.1",
+                        "key": "net.if.in[ifHCInOctets.1]",
+                        "delay": "3m",
+                        "history": "7d",
+                        "units": "bps",
+                        "description": "MIB: IF-MIB\nThe total number of octets received on the interface, including framing characters. This object is a 64-bit version of ifInOctets. Discontinuities in the value of this counter can occur at re-initialization of the management system, and at other times as indicated by the value of ifCounterDiscontinuityTime.",
+                        "preprocessing": [
+                            {
+                                "type": "CHANGE_PER_SECOND",
+                                "parameters": [
+                                    ""
+                                ]
+                            },
+                            {
+                                "type": "MULTIPLIER",
+                                "parameters": [
+                                    "8"
+                                ]
+                            }
+                        ],
+                        "interface_ref": "if1",
+                        "tags": [
+                            {
+                                "tag": "component",
+                                "value": "network"
+                            },
+                            {
+                                "tag": "interface",
+                                "value": "eth0"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Interface eth1(): Bits received",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "1.3.6.1.2.1.31.1.1.1.6.2",
+                        "key": "net.if.in[ifHCInOctets.2]",
+                        "delay": "3m",
+                        "history": "7d",
+                        "units": "bps",
+                        "description": "MIB: IF-MIB\nThe total number of octets received on the interface, including framing characters. This object is a 64-bit version of ifInOctets. Discontinuities in the value of this counter can occur at re-initialization of the management system, and at other times as indicated by the value of ifCounterDiscontinuityTime.",
+                        "preprocessing": [
+                            {
+                                "type": "CHANGE_PER_SECOND",
+                                "parameters": [
+                                    ""
+                                ]
+                            },
+                            {
+                                "type": "MULTIPLIER",
+                                "parameters": [
+                                    "8"
+                                ]
+                            }
+                        ],
+                        "interface_ref": "if1",
+                        "tags": [
+                            {
+                                "tag": "component",
+                                "value": "network"
+                            },
+                            {
+                                "tag": "interface",
+                                "value": "eth1"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Interface eth0(): Bits sent",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "1.3.6.1.2.1.31.1.1.1.10.1",
+                        "key": "net.if.out[ifHCOutOctets.1]",
+                        "delay": "3m",
+                        "history": "7d",
+                        "units": "bps",
+                        "description": "MIB: IF-MIB\nThe total number of octets transmitted out of the interface, including framing characters. This object is a 64-bit version of ifOutOctets.Discontinuities in the value of this counter can occur at re-initialization of the management system, and at other times as indicated by the value of ifCounterDiscontinuityTime.",
+                        "preprocessing": [
+                            {
+                                "type": "CHANGE_PER_SECOND",
+                                "parameters": [
+                                    ""
+                                ]
+                            },
+                            {
+                                "type": "MULTIPLIER",
+                                "parameters": [
+                                    "8"
+                                ]
+                            }
+                        ],
+                        "interface_ref": "if1",
+                        "tags": [
+                            {
+                                "tag": "component",
+                                "value": "network"
+                            },
+                            {
+                                "tag": "interface",
+                                "value": "eth0"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Interface eth1(): Bits sent",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "1.3.6.1.2.1.31.1.1.1.10.2",
+                        "key": "net.if.out[ifHCOutOctets.2]",
+                        "delay": "3m",
+                        "history": "7d",
+                        "units": "bps",
+                        "description": "MIB: IF-MIB\nThe total number of octets transmitted out of the interface, including framing characters. This object is a 64-bit version of ifOutOctets.Discontinuities in the value of this counter can occur at re-initialization of the management system, and at other times as indicated by the value of ifCounterDiscontinuityTime.",
+                        "preprocessing": [
+                            {
+                                "type": "CHANGE_PER_SECOND",
+                                "parameters": [
+                                    ""
+                                ]
+                            },
+                            {
+                                "type": "MULTIPLIER",
+                                "parameters": [
+                                    "8"
+                                ]
+                            }
+                        ],
+                        "interface_ref": "if1",
+                        "tags": [
+                            {
+                                "tag": "component",
+                                "value": "network"
+                            },
+                            {
+                                "tag": "interface",
+                                "value": "eth1"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Interface eth0(): Speed",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "1.3.6.1.2.1.31.1.1.1.15.1",
+                        "key": "net.if.speed[ifHighSpeed.1]",
+                        "delay": "5m",
+                        "history": "7d",
+                        "trends": "0",
+                        "units": "bps",
+                        "description": "MIB: IF-MIB\nAn estimate of the interface's current bandwidth in units of 1,000,000 bits per second. If this object reports a value of `n' then the speed of the interface is somewhere in the range of `n-500,000' to`n+499,999'.  For interfaces which do not vary in bandwidth or for those where no accurate estimation can be made, this object should contain the nominal bandwidth. For a sub-layer which has no concept of bandwidth, this object should be zero.",
+                        "preprocessing": [
+                            {
+                                "type": "MULTIPLIER",
+                                "parameters": [
+                                    "1000000"
+                                ]
+                            },
+                            {
+                                "type": "DISCARD_UNCHANGED_HEARTBEAT",
+                                "parameters": [
+                                    "1h"
+                                ]
+                            }
+                        ],
+                        "interface_ref": "if1",
+                        "tags": [
+                            {
+                                "tag": "component",
+                                "value": "network"
+                            },
+                            {
+                                "tag": "interface",
+                                "value": "eth0"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Interface eth1(): Speed",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "1.3.6.1.2.1.31.1.1.1.15.2",
+                        "key": "net.if.speed[ifHighSpeed.2]",
+                        "delay": "5m",
+                        "history": "7d",
+                        "trends": "0",
+                        "units": "bps",
+                        "description": "MIB: IF-MIB\nAn estimate of the interface's current bandwidth in units of 1,000,000 bits per second. If this object reports a value of `n' then the speed of the interface is somewhere in the range of `n-500,000' to`n+499,999'.  For interfaces which do not vary in bandwidth or for those where no accurate estimation can be made, this object should contain the nominal bandwidth. For a sub-layer which has no concept of bandwidth, this object should be zero.",
+                        "preprocessing": [
+                            {
+                                "type": "MULTIPLIER",
+                                "parameters": [
+                                    "1000000"
+                                ]
+                            },
+                            {
+                                "type": "DISCARD_UNCHANGED_HEARTBEAT",
+                                "parameters": [
+                                    "1h"
+                                ]
+                            }
+                        ],
+                        "interface_ref": "if1",
+                        "tags": [
+                            {
+                                "tag": "component",
+                                "value": "network"
+                            },
+                            {
+                                "tag": "interface",
+                                "value": "eth1"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Interface eth0(): Operational status",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "1.3.6.1.2.1.2.2.1.8.1",
+                        "key": "net.if.status[ifOperStatus.1]",
+                        "history": "7d",
+                        "trends": "0",
+                        "description": "MIB: IF-MIB\nThe current operational state of the interface.\n- The testing(3) state indicates that no operational packet scan be passed\n- If ifAdminStatus is down(2) then ifOperStatus should be down(2)\n- If ifAdminStatus is changed to up(1) then ifOperStatus should change to up(1) if the interface is ready to transmit and receive network traffic\n- It should change todormant(5) if the interface is waiting for external actions (such as a serial line waiting for an incoming connection)\n- It should remain in the down(2) state if and only if there is a fault that prevents it from going to the up(1) state\n- It should remain in the notPresent(6) state if the interface has missing(typically, hardware) components.",
+                        "valuemap": {
+                            "name": "IF-MIB::ifOperStatus"
+                        },
+                        "interface_ref": "if1",
+                        "tags": [
+                            {
+                                "tag": "component",
+                                "value": "network"
+                            },
+                            {
+                                "tag": "interface",
+                                "value": "eth0"
+                            }
+                        ],
+                        "triggers": [
+                            {
+                                "expression": "{$IFCONTROL:\"eth0\"}=1 and last(/router-3/net.if.status[ifOperStatus.1])=2 and (last(/router-3/net.if.status[ifOperStatus.1],#1)<>last(/router-3/net.if.status[ifOperStatus.1],#2))",
+                                "recovery_mode": "RECOVERY_EXPRESSION",
+                                "recovery_expression": "last(/router-3/net.if.status[ifOperStatus.1])<>2 or {$IFCONTROL:\"eth0\"}=0",
+                                "name": "Interface eth0(): Link down",
+                                "opdata": "Current state: {ITEM.LASTVALUE1}",
+                                "priority": "AVERAGE",
+                                "description": "This trigger expression works as follows:\n1. Can be triggered if operations status is down.\n2. {$IFCONTROL:\"eth0\"}=1 - user can redefine Context macro to value - 0. That marks this interface as not important. No new trigger will be fired if this interface is down.\n3. {TEMPLATE_NAME:METRIC.diff()}=1) - trigger fires only if operational status was up(1) sometime before. (So, do not fire 'ethernal off' interfaces.)\n\nWARNING: if closed manually - won't fire again on next poll, because of .diff.",
+                                "manual_close": "YES",
+                                "tags": [
+                                    {
+                                        "tag": "scope",
+                                        "value": "availability"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Interface eth1(): Operational status",
+                        "type": "SNMP_AGENT",
+                        "snmp_oid": "1.3.6.1.2.1.2.2.1.8.2",
+                        "key": "net.if.status[ifOperStatus.2]",
+                        "history": "7d",
+                        "trends": "0",
+                        "description": "MIB: IF-MIB\nThe current operational state of the interface.\n- The testing(3) state indicates that no operational packet scan be passed\n- If ifAdminStatus is down(2) then ifOperStatus should be down(2)\n- If ifAdminStatus is changed to up(1) then ifOperStatus should change to up(1) if the interface is ready to transmit and receive network traffic\n- It should change todormant(5) if the interface is waiting for external actions (such as a serial line waiting for an incoming connection)\n- It should remain in the down(2) state if and only if there is a fault that prevents it from going to the up(1) state\n- It should remain in the notPresent(6) state if the interface has missing(typically, hardware) components.",
+                        "valuemap": {
+                            "name": "IF-MIB::ifOperStatus"
+                        },
+                        "interface_ref": "if1",
+                        "tags": [
+                            {
+                                "tag": "component",
+                                "value": "network"
+                            },
+                            {
+                                "tag": "interface",
+                                "value": "eth1"
+                            }
+                        ],
+                        "triggers": [
+                            {
+                                "expression": "{$IFCONTROL:\"eth1\"}=1 and last(/router-3/net.if.status[ifOperStatus.2])=2 and (last(/router-3/net.if.status[ifOperStatus.2],#1)<>last(/router-3/net.if.status[ifOperStatus.2],#2))",
+                                "recovery_mode": "RECOVERY_EXPRESSION",
+                                "recovery_expression": "last(/router-3/net.if.status[ifOperStatus.2])<>2 or {$IFCONTROL:\"eth1\"}=0",
+                                "name": "Interface eth1(): Link down",
+                                "opdata": "Current state: {ITEM.LASTVALUE1}",
+                                "priority": "AVERAGE",
+                                "description": "This trigger expression works as follows:\n1. Can be triggered if operations status is down.\n2. {$IFCONTROL:\"eth1\"}=1 - user can redefine Context macro to value - 0. That marks this interface as not important. No new trigger will be fired if this interface is down.\n3. {TEMPLATE_NAME:METRIC.diff()}=1) - trigger fires only if operational status was up(1) sometime before. (So, do not fire 'ethernal off' interfaces.)\n\nWARNING: if closed manually - won't fire again on next poll, because of .diff.",
+                                "manual_close": "YES",
+                                "tags": [
+                                    {
+                                        "tag": "scope",
+                                        "value": "availability"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "macros": [
+                    {
+                        "macro": "{$IF.UTIL.MAX}",
+                        "value": "90"
+                    },
+                    {
+                        "macro": "{$IFCONTROL}",
+                        "value": "1"
+                    },
+                    {
+                        "macro": "{$SNMP_COMMUNITY}",
+                        "value": "router-3"
+                    }
+                ],
+                "inventory_mode": "DISABLED",
+                "valuemaps": [
+                    {
+                        "name": "IF-MIB::ifOperStatus",
+                        "mappings": [
+                            {
+                                "value": "1",
+                                "newvalue": "up"
+                            },
+                            {
+                                "value": "2",
+                                "newvalue": "down"
+                            },
+                            {
+                                "value": "4",
+                                "newvalue": "unknown"
+                            },
+                            {
+                                "value": "5",
+                                "newvalue": "dormant"
+                            },
+                            {
+                                "value": "6",
+                                "newvalue": "notPresent"
+                            },
+                            {
+                                "value": "7",
+                                "newvalue": "lowerLayerDown"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "triggers": [
+            {
+                "expression": "(avg(/router-1/net.if.in[ifHCInOctets.1],15m)>({$IF.UTIL.MAX:\"eth0\"}/100)*last(/router-1/net.if.speed[ifHighSpeed.1]) or\navg(/router-1/net.if.out[ifHCOutOctets.1],15m)>({$IF.UTIL.MAX:\"eth0\"}/100)*last(/router-1/net.if.speed[ifHighSpeed.1])) and\nlast(/router-1/net.if.speed[ifHighSpeed.1])>0",
+                "recovery_mode": "RECOVERY_EXPRESSION",
+                "recovery_expression": "avg(/router-1/net.if.in[ifHCInOctets.1],15m)<(({$IF.UTIL.MAX:\"eth0\"}-3)/100)*last(/router-1/net.if.speed[ifHighSpeed.1]) and\navg(/router-1/net.if.out[ifHCOutOctets.1],15m)<(({$IF.UTIL.MAX:\"eth0\"}-3)/100)*last(/router-1/net.if.speed[ifHighSpeed.1])",
+                "name": "Interface eth0(): High bandwidth usage",
+                "event_name": "Interface eth0(): High bandwidth usage (>{$IF.UTIL.MAX:\"eth0\"}%)",
+                "opdata": "In: {ITEM.LASTVALUE1}, out: {ITEM.LASTVALUE3}, speed: {ITEM.LASTVALUE2}",
+                "priority": "WARNING",
+                "description": "The network interface utilization is close to its estimated maximum bandwidth.",
+                "manual_close": "YES",
+                "dependencies": [
+                    {
+                        "name": "Interface eth0(): Link down",
+                        "expression": "{$IFCONTROL:\"eth0\"}=1 and last(/router-1/net.if.status[ifOperStatus.1])=2 and (last(/router-1/net.if.status[ifOperStatus.1],#1)<>last(/router-1/net.if.status[ifOperStatus.1],#2))",
+                        "recovery_expression": "last(/router-1/net.if.status[ifOperStatus.1])<>2 or {$IFCONTROL:\"eth0\"}=0"
+                    }
+                ],
+                "tags": [
+                    {
+                        "tag": "scope",
+                        "value": "performance"
+                    }
+                ]
+            },
+            {
+                "expression": "(avg(/router-2/net.if.in[ifHCInOctets.1],15m)>({$IF.UTIL.MAX:\"eth0\"}/100)*last(/router-2/net.if.speed[ifHighSpeed.1]) or\navg(/router-2/net.if.out[ifHCOutOctets.1],15m)>({$IF.UTIL.MAX:\"eth0\"}/100)*last(/router-2/net.if.speed[ifHighSpeed.1])) and\nlast(/router-2/net.if.speed[ifHighSpeed.1])>0",
+                "recovery_mode": "RECOVERY_EXPRESSION",
+                "recovery_expression": "avg(/router-2/net.if.in[ifHCInOctets.1],15m)<(({$IF.UTIL.MAX:\"eth0\"}-3)/100)*last(/router-2/net.if.speed[ifHighSpeed.1]) and\navg(/router-2/net.if.out[ifHCOutOctets.1],15m)<(({$IF.UTIL.MAX:\"eth0\"}-3)/100)*last(/router-2/net.if.speed[ifHighSpeed.1])",
+                "name": "Interface eth0(): High bandwidth usage",
+                "event_name": "Interface eth0(): High bandwidth usage (>{$IF.UTIL.MAX:\"eth0\"}%)",
+                "opdata": "In: {ITEM.LASTVALUE1}, out: {ITEM.LASTVALUE3}, speed: {ITEM.LASTVALUE2}",
+                "priority": "WARNING",
+                "description": "The network interface utilization is close to its estimated maximum bandwidth.",
+                "manual_close": "YES",
+                "dependencies": [
+                    {
+                        "name": "Interface eth0(): Link down",
+                        "expression": "{$IFCONTROL:\"eth0\"}=1 and last(/router-2/net.if.status[ifOperStatus.1])=2 and (last(/router-2/net.if.status[ifOperStatus.1],#1)<>last(/router-2/net.if.status[ifOperStatus.1],#2))",
+                        "recovery_expression": "last(/router-2/net.if.status[ifOperStatus.1])<>2 or {$IFCONTROL:\"eth0\"}=0"
+                    }
+                ],
+                "tags": [
+                    {
+                        "tag": "scope",
+                        "value": "performance"
+                    }
+                ]
+            },
+            {
+                "expression": "(avg(/router-3/net.if.in[ifHCInOctets.1],15m)>({$IF.UTIL.MAX:\"eth0\"}/100)*last(/router-3/net.if.speed[ifHighSpeed.1]) or\navg(/router-3/net.if.out[ifHCOutOctets.1],15m)>({$IF.UTIL.MAX:\"eth0\"}/100)*last(/router-3/net.if.speed[ifHighSpeed.1])) and\nlast(/router-3/net.if.speed[ifHighSpeed.1])>0",
+                "recovery_mode": "RECOVERY_EXPRESSION",
+                "recovery_expression": "avg(/router-3/net.if.in[ifHCInOctets.1],15m)<(({$IF.UTIL.MAX:\"eth0\"}-3)/100)*last(/router-3/net.if.speed[ifHighSpeed.1]) and\navg(/router-3/net.if.out[ifHCOutOctets.1],15m)<(({$IF.UTIL.MAX:\"eth0\"}-3)/100)*last(/router-3/net.if.speed[ifHighSpeed.1])",
+                "name": "Interface eth0(): High bandwidth usage",
+                "event_name": "Interface eth0(): High bandwidth usage (>{$IF.UTIL.MAX:\"eth0\"}%)",
+                "opdata": "In: {ITEM.LASTVALUE1}, out: {ITEM.LASTVALUE3}, speed: {ITEM.LASTVALUE2}",
+                "priority": "WARNING",
+                "description": "The network interface utilization is close to its estimated maximum bandwidth.",
+                "manual_close": "YES",
+                "dependencies": [
+                    {
+                        "name": "Interface eth0(): Link down",
+                        "expression": "{$IFCONTROL:\"eth0\"}=1 and last(/router-3/net.if.status[ifOperStatus.1])=2 and (last(/router-3/net.if.status[ifOperStatus.1],#1)<>last(/router-3/net.if.status[ifOperStatus.1],#2))",
+                        "recovery_expression": "last(/router-3/net.if.status[ifOperStatus.1])<>2 or {$IFCONTROL:\"eth0\"}=0"
+                    }
+                ],
+                "tags": [
+                    {
+                        "tag": "scope",
+                        "value": "performance"
+                    }
+                ]
+            },
+            {
+                "expression": "(avg(/router-1/net.if.in[ifHCInOctets.2],15m)>({$IF.UTIL.MAX:\"eth1\"}/100)*last(/router-1/net.if.speed[ifHighSpeed.2]) or\navg(/router-1/net.if.out[ifHCOutOctets.2],15m)>({$IF.UTIL.MAX:\"eth1\"}/100)*last(/router-1/net.if.speed[ifHighSpeed.2])) and\nlast(/router-1/net.if.speed[ifHighSpeed.2])>0",
+                "recovery_mode": "RECOVERY_EXPRESSION",
+                "recovery_expression": "avg(/router-1/net.if.in[ifHCInOctets.2],15m)<(({$IF.UTIL.MAX:\"eth1\"}-3)/100)*last(/router-1/net.if.speed[ifHighSpeed.2]) and\navg(/router-1/net.if.out[ifHCOutOctets.2],15m)<(({$IF.UTIL.MAX:\"eth1\"}-3)/100)*last(/router-1/net.if.speed[ifHighSpeed.2])",
+                "name": "Interface eth1(): High bandwidth usage",
+                "event_name": "Interface eth1(): High bandwidth usage (>{$IF.UTIL.MAX:\"eth1\"}%)",
+                "opdata": "In: {ITEM.LASTVALUE1}, out: {ITEM.LASTVALUE3}, speed: {ITEM.LASTVALUE2}",
+                "priority": "WARNING",
+                "description": "The network interface utilization is close to its estimated maximum bandwidth.",
+                "manual_close": "YES",
+                "dependencies": [
+                    {
+                        "name": "Interface eth1(): Link down",
+                        "expression": "{$IFCONTROL:\"eth1\"}=1 and last(/router-1/net.if.status[ifOperStatus.2])=2 and (last(/router-1/net.if.status[ifOperStatus.2],#1)<>last(/router-1/net.if.status[ifOperStatus.2],#2))",
+                        "recovery_expression": "last(/router-1/net.if.status[ifOperStatus.2])<>2 or {$IFCONTROL:\"eth1\"}=0"
+                    }
+                ],
+                "tags": [
+                    {
+                        "tag": "scope",
+                        "value": "performance"
+                    }
+                ]
+            },
+            {
+                "expression": "(avg(/router-2/net.if.in[ifHCInOctets.2],15m)>({$IF.UTIL.MAX:\"eth1\"}/100)*last(/router-2/net.if.speed[ifHighSpeed.2]) or\navg(/router-2/net.if.out[ifHCOutOctets.2],15m)>({$IF.UTIL.MAX:\"eth1\"}/100)*last(/router-2/net.if.speed[ifHighSpeed.2])) and\nlast(/router-2/net.if.speed[ifHighSpeed.2])>0",
+                "recovery_mode": "RECOVERY_EXPRESSION",
+                "recovery_expression": "avg(/router-2/net.if.in[ifHCInOctets.2],15m)<(({$IF.UTIL.MAX:\"eth1\"}-3)/100)*last(/router-2/net.if.speed[ifHighSpeed.2]) and\navg(/router-2/net.if.out[ifHCOutOctets.2],15m)<(({$IF.UTIL.MAX:\"eth1\"}-3)/100)*last(/router-2/net.if.speed[ifHighSpeed.2])",
+                "name": "Interface eth1(): High bandwidth usage",
+                "event_name": "Interface eth1(): High bandwidth usage (>{$IF.UTIL.MAX:\"eth1\"}%)",
+                "opdata": "In: {ITEM.LASTVALUE1}, out: {ITEM.LASTVALUE3}, speed: {ITEM.LASTVALUE2}",
+                "priority": "WARNING",
+                "description": "The network interface utilization is close to its estimated maximum bandwidth.",
+                "manual_close": "YES",
+                "dependencies": [
+                    {
+                        "name": "Interface eth1(): Link down",
+                        "expression": "{$IFCONTROL:\"eth1\"}=1 and last(/router-2/net.if.status[ifOperStatus.2])=2 and (last(/router-2/net.if.status[ifOperStatus.2],#1)<>last(/router-2/net.if.status[ifOperStatus.2],#2))",
+                        "recovery_expression": "last(/router-2/net.if.status[ifOperStatus.2])<>2 or {$IFCONTROL:\"eth1\"}=0"
+                    }
+                ],
+                "tags": [
+                    {
+                        "tag": "scope",
+                        "value": "performance"
+                    }
+                ]
+            },
+            {
+                "expression": "(avg(/router-3/net.if.in[ifHCInOctets.2],15m)>({$IF.UTIL.MAX:\"eth1\"}/100)*last(/router-3/net.if.speed[ifHighSpeed.2]) or\navg(/router-3/net.if.out[ifHCOutOctets.2],15m)>({$IF.UTIL.MAX:\"eth1\"}/100)*last(/router-3/net.if.speed[ifHighSpeed.2])) and\nlast(/router-3/net.if.speed[ifHighSpeed.2])>0",
+                "recovery_mode": "RECOVERY_EXPRESSION",
+                "recovery_expression": "avg(/router-3/net.if.in[ifHCInOctets.2],15m)<(({$IF.UTIL.MAX:\"eth1\"}-3)/100)*last(/router-3/net.if.speed[ifHighSpeed.2]) and\navg(/router-3/net.if.out[ifHCOutOctets.2],15m)<(({$IF.UTIL.MAX:\"eth1\"}-3)/100)*last(/router-3/net.if.speed[ifHighSpeed.2])",
+                "name": "Interface eth1(): High bandwidth usage",
+                "event_name": "Interface eth1(): High bandwidth usage (>{$IF.UTIL.MAX:\"eth1\"}%)",
+                "opdata": "In: {ITEM.LASTVALUE1}, out: {ITEM.LASTVALUE3}, speed: {ITEM.LASTVALUE2}",
+                "priority": "WARNING",
+                "description": "The network interface utilization is close to its estimated maximum bandwidth.",
+                "manual_close": "YES",
+                "dependencies": [
+                    {
+                        "name": "Interface eth1(): Link down",
+                        "expression": "{$IFCONTROL:\"eth1\"}=1 and last(/router-3/net.if.status[ifOperStatus.2])=2 and (last(/router-3/net.if.status[ifOperStatus.2],#1)<>last(/router-3/net.if.status[ifOperStatus.2],#2))",
+                        "recovery_expression": "last(/router-3/net.if.status[ifOperStatus.2])<>2 or {$IFCONTROL:\"eth1\"}=0"
+                    }
+                ],
+                "tags": [
+                    {
+                        "tag": "scope",
+                        "value": "performance"
+                    }
+                ]
+            }
+        ]
+    }
+}

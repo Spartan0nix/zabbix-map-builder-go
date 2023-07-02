@@ -85,6 +85,7 @@ func RunApp(file string, options *Options, logger *logging.Logger) error {
 		TriggerColor: options.TriggerColor,
 		Height:       options.Height,
 		Width:        options.Width,
+		Spacer:       options.Spacer,
 		StackHosts:   options.StackHosts,
 		Mappings:     mappings,
 		Hosts:        hosts,

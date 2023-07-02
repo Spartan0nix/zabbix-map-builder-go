@@ -18,6 +18,7 @@ type Options struct {
 	TriggerColor string
 	Height       string
 	Width        string
+	Spacer       int64
 	StackHosts   bool
 	DryRun       bool
 }

@@ -71,6 +71,7 @@ func TestRunApp(t *testing.T) {
 		TriggerColor: "EE445B",
 		Width:        "400",
 		Height:       "400",
+		Spacer:       50,
 	}
 
 	err := RunApp(mappingFilePath, &opts, nil)
@@ -97,6 +98,7 @@ func TestRunAppDryRun(t *testing.T) {
 		TriggerColor: "EE445B",
 		Height:       "800",
 		Width:        "800",
+		Spacer:       50,
 		DryRun:       true,
 	}
 
@@ -141,6 +143,7 @@ func TestRunAppOutFile(t *testing.T) {
 		TriggerColor: "EE445B",
 		Height:       "800",
 		Width:        "800",
+		Spacer:       50,
 		OutFile:      outFile,
 	}
 

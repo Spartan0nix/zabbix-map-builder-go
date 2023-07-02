@@ -35,3 +35,18 @@ func validateHexa(h string) error {
 
 	return nil
 }
+
+// convertPositionToInt is used to convert to position x and y from string to int64
+func convertPositionToInt64(x string, y string) (int64, int64, error) {
+	xToInt, err := strconv.ParseInt(x, 10, 64)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	yToInt, err := strconv.ParseInt(y, 10, 64)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	return xToInt, yToInt, nil
+}

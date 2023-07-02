@@ -25,6 +25,7 @@ type MapOptions struct {
 	TriggerColor string
 	Height       string
 	Width        string
+	Spacer       int64
 	StackHosts   bool
 	Mappings     []*Mapping
 	Hosts        map[string]string
@@ -107,6 +108,11 @@ func BuildMap(client *zabbixgosdk.ZabbixService, options *MapOptions) (*zabbixgo
 	zbxMap.Height = options.Height
 	zbxMap.Width = options.Width
 
+	position, err := initPosition(options.Width, options.Height, options.Spacer)
+	if err != nil {
+		return nil, err
+	}
+
 	// Loop over each mapping
 	for _, mapping := range options.Mappings {
 		localElementId := options.Hosts[mapping.LocalHost]
@@ -118,8 +124,18 @@ func BuildMap(client *zabbixgosdk.ZabbixService, options *MapOptions) (*zabbixgo
 		}
 
 		// Add the hosts to the map
-		zbxMap = addHosts(zbxMap, localElementId, options.Hosts[mapping.LocalHost], options.Images[mapping.LocalImage])
-		zbxMap = addHosts(zbxMap, remoteElementId, options.Hosts[mapping.RemoteHost], options.Images[mapping.RemoteImage])
+		zbxMap = addHosts(zbxMap, &hostParameters{
+			id:       localElementId,
+			name:     options.Hosts[mapping.LocalHost],
+			image:    options.Images[mapping.LocalImage],
+			position: position,
+		})
+		zbxMap = addHosts(zbxMap, &hostParameters{
+			id:       remoteElementId,
+			name:     options.Hosts[mapping.RemoteHost],
+			image:    options.Images[mapping.RemoteImage],
+			position: position,
+		})
 
 		// Retriev the triggers id based on the given pattern for each hosts
 		localTriggerId, err := getTriggerId(client, options.Hosts[mapping.LocalHost], mapping.LocalTriggerPattern)

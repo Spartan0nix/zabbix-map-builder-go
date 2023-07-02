@@ -7,7 +7,7 @@ import (
 )
 
 func TestCreateHostElement(t *testing.T) {
-	element := createHostElement("2", "1", "11")
+	element := createHostElement("2", "1", "11", "135", "135")
 	elementHosts := element.Elements.([]zabbixgosdk.MapElementHost)
 
 	if element.Id != "2" {
@@ -33,7 +33,18 @@ func TestCreateHostElement(t *testing.T) {
 
 func TestAddHosts(t *testing.T) {
 	zbxMap := &zabbixgosdk.MapCreateParameters{}
-	zbxMap = addHosts(zbxMap, "2", "1", "11")
+	zbxMap = addHosts(zbxMap, &hostParameters{
+		id:    "2",
+		name:  "1",
+		image: "1",
+		position: &hostPosition{
+			spacer: 10,
+			mapX:   100,
+			mapY:   100,
+			x:      10,
+			y:      10,
+		},
+	})
 
 	if len(zbxMap.Elements) != 1 {
 		t.Fatalf("wrong number of elements set.\nExpected : 1\nReturned : %d", len(zbxMap.Elements))

@@ -37,12 +37,12 @@ down:
 # CLI commands
 # ------------------------------------------------
 run:
-	go run main.go --name test-map-builder --file examples/mapping.json
+	go run main.go --name test-map-builder \
+		--file examples/mapping.json
 
 run-debug:
 	go run main.go --name test-map-builder \
 		--file examples/mapping.json \
-		--output examples/output.json \
 		--debug
 
 run-outfile:
@@ -50,20 +50,39 @@ run-outfile:
 		--file examples/mapping.json \
 		--output examples/output.json
 
-run-color:
+run-outfile-debug:
 	go run main.go --name test-map-builder \
 		--file examples/mapping.json \
 		--output examples/output.json \
+		--debug
+
+run-color:
+	go run main.go --name test-map-builder \
+		--file examples/mapping.json \
 		--color 7AC2E1 \
 		--trigger-color EE445B
+
+run-color-debug:
+	go run main.go --name test-map-builder \
+		--file examples/mapping.json \
+		--color 7AC2E1 \
+		--trigger-color EE445B \
+		--debug
 
 run-dry:
 	go run main.go --name test-map-builder \
 		--file examples/mapping.json \
-		--output examples/output.json \
 		--color 7AC2E1 \
 		--trigger-color EE445B \
 		--dry-run
+
+run-dry-debug:
+	go run main.go --name test-map-builder \
+		--file examples/mapping.json \
+		--color 7AC2E1 \
+		--trigger-color EE445B \
+		--dry-run \
+		--debug
 
 run-unstack-hosts:
 	go run main.go --name test-map-builder \
@@ -72,6 +91,15 @@ run-unstack-hosts:
 		--color 7AC2E1 \
 		--trigger-color EE445B \
 		--stack-hosts false
+
+run-unstack-hosts-debug:
+	go run main.go --name test-map-builder \
+		--file examples/mapping.json \
+		--output examples/output.json \
+		--color 7AC2E1 \
+		--trigger-color EE445B \
+		--stack-hosts false \
+		--debug
 
 # - HELPER
 help:

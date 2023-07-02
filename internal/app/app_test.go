@@ -71,7 +71,7 @@ func TestRunApp(t *testing.T) {
 		TriggerColor: "EE445B",
 	}
 
-	err := RunApp(mappingFilePath, &opts)
+	err := RunApp(mappingFilePath, &opts, nil)
 	if err != nil {
 		t.Fatalf("error while executing RunApp function.\nReason : %v", err)
 	}
@@ -107,7 +107,7 @@ func TestRunAppDryRun(t *testing.T) {
 		outChannel <- buf.String()
 	}()
 
-	err := RunApp(mappingFilePath, &opts)
+	err := RunApp(mappingFilePath, &opts, nil)
 	if err != nil {
 		t.Fatalf("error while executing RunApp function.\nReason : %v", err)
 	}
@@ -138,7 +138,7 @@ func TestRunAppOutFile(t *testing.T) {
 		OutFile:      outFile,
 	}
 
-	err := RunApp(mappingFilePath, &opts)
+	err := RunApp(mappingFilePath, &opts, nil)
 	if err != nil {
 		t.Fatalf("error while executing RunApp function.\nReason : %v", err)
 	}
@@ -161,7 +161,7 @@ func TestRunAppFailReadInput(t *testing.T) {
 	// Set the required arguments
 	opts := Options{}
 
-	err := RunApp("file-does-not-exist", &opts)
+	err := RunApp("file-does-not-exist", &opts, nil)
 	if err == nil {
 		t.Fatalf("an error should be returned when the host mapping file does not exist")
 	}
@@ -177,7 +177,7 @@ func TestRunAppFailInitApi(t *testing.T) {
 		TriggerColor: "EE445B",
 	}
 
-	err := RunApp(mappingFilePath, &opts)
+	err := RunApp(mappingFilePath, &opts, nil)
 	if err == nil {
 		t.Fatalf("an error should be returned when the Zabbix API is unreachable")
 	}

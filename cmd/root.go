@@ -45,11 +45,14 @@ func newRootCmd() *cobra.Command {
 			}
 
 			// Retrieve the required environment variables.
+			GlobalLogger.Debug("retrieving environment variables")
 			options, err := app.GetEnvironmentVariables()
 			if err != nil {
 				GlobalLogger.Error("error when reading the required environment variables", fmt.Sprintf("reason : %s", err))
 				os.Exit(1)
 			}
+
+			GlobalLogger.Debug(fmt.Sprintf("using the following environment variables :\nZABBIX_URL => %s\nZABBIX_USER => %s\nZABBIX_PWD => <masked-for-security-reason>", options.ZabbixUrl, options.ZabbixUser))
 
 			options.Name = Name
 			options.OutFile = OutFile
@@ -59,9 +62,9 @@ func newRootCmd() *cobra.Command {
 			options.DryRun = DryRun
 
 			// Run the application.
-			err = app.RunApp(File, options)
+			err = app.RunApp(File, options, GlobalLogger)
 			if err != nil {
-				GlobalLogger.Error("error when executing command", err)
+				GlobalLogger.Error("error when executing the command", err)
 				os.Exit(1)
 			}
 		},
@@ -86,7 +89,7 @@ func Execute() {
 	rootCmd := newRootCmd()
 	err := rootCmd.Execute()
 	if err != nil {
-		log.Fatalf("Error when during command initialization.\nReason : %v", err)
+		log.Fatalf("error during command initialization.\nReason : %v", err)
 	}
 }
 

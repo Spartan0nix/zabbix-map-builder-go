@@ -158,12 +158,15 @@ Flags:
   -c, --color string           color in hexadecimal used for the links between each hosts (default "000000")
   -v, --debug                  enable debug logging verbosity
       --dry-run                output to the shell the map definition without created it on the server
-  -f, --file string            input file
+  -f, --file string            file containing the hosts mapping
+      --height string          height in pixel of the map (default "800")
   -h, --help                   help for this command
-      --name string            name of map
-  -o, --output string          output the parameters used to create the map
-      --stack-hosts bools      connect multiple links to a single host. If set to false, if mapping will have is own hosts. This can be useful for infrastructure with redundant connexion (default [true])
+      --name string            name of the map
+  -o, --output string          output the parameters used to create the map to a file
+      --spacer int             space in pixel between each host (example : X_host2 = X_host1 + <value>) (default 100)
+      --stack-hosts bools      connect multiple links to a single host. If set to false, each mapping will have is own hosts (local and remote). This can be useful for infrastructure with redundant connexion (default [true])
       --trigger-color string   color in hexadecimal used for the links between each hosts when a trigger is in problem state (default "DD0000")
+      --width string           width in pixel of the map (default "800")
 ```
 
 ### Completion

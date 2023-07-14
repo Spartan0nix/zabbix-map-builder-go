@@ -1,0 +1,51 @@
+-------------------------------------------------------------------------------
+-- Mib
+-------------------------------------------------------------------------------
+cdpCacheEntry :: 1.3.6.1.4.1.9.9.23.1.2.1.1
+    cdpCacheAddress      :: 1.3.6.1.4.1.9.9.23.1.2.1.1.4
+    cdpCacheDeviceId     :: 1.3.6.1.4.1.9.9.23.1.2.1.1.6
+    cdpCacheDevicePort   :: 1.3.6.1.4.1.9.9.23.1.2.1.1.7
+    cdpCacheCapabilities :: 1.3.6.1.4.1.9.9.23.1.2.1.1.9
+
+IfXEntry :: 1.3.6.1.2.1.31.1.1.1
+    ifName :: 1.3.6.1.2.1.31.1.1.1.1
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- Fixtures
+-------------------------------------------------------------------------------
+router-1 [g0] -> router-2 [g0]
+router-1 [g1] -> router-3 [g1]
+
+cdpCacheEntry :: 1.3.6.1.4.1.9.9.23.1.2.1.1
+    cdpCacheAddress      (hex-STRING) :: 1.3.6.1.4.1.9.9.23.1.2.1.1.4.100.1 = C0 A8 01 64 (192.168.1.100)
+	cdpCacheAddress      (hex-STRING) :: 1.3.6.1.4.1.9.9.23.1.2.1.1.4.101.1 = C0 A8 01 C8 (192.168.1.200)
+	
+    cdpCacheDeviceId     (STRING)     :: 1.3.6.1.4.1.9.9.23.1.2.1.1.6.100.1 = "router-2"
+	cdpCacheDeviceId     (STRING)     :: 1.3.6.1.4.1.9.9.23.1.2.1.1.6.101.2 = "router-3"
+	
+    cdpCacheDevicePort   (STRING)     :: 1.3.6.1.4.1.9.9.23.1.2.1.1.7.100.1 = "GigabitEthernet0"
+	cdpCacheDevicePort   (STRING)     :: 1.3.6.1.4.1.9.9.23.1.2.1.1.7.101.2 = "GigabitEthernet1"
+	
+	cdpCacheCapabilities (hex-STRING) :: 1.3.6.1.4.1.9.9.23.1.2.1.1.9.100.1 = "00 00 00 29" (R S I)
+	cdpCacheCapabilities (hex-STRING) :: 1.3.6.1.4.1.9.9.23.1.2.1.1.9.101.2 = "00 00 00 28" (S I)
+
+IfXEntry :: 1.3.6.1.2.1.31.1.1.1
+    ifName (STRING) :: 1.3.6.1.2.1.31.1.1.1.1.101 = "GigabitEthernet0"
+	ifName (STRING) :: 1.3.6.1.2.1.31.1.1.1.1.102 = "GigabitEthernet1"
+	
+cdpCacheCapabilities :
+R - Router
+T - Trans Bridge
+B - Source Route Bridge
+S - Switch
+H - Host
+I - IGMP
+r - Repeater
+P - Phone
+D - Remote
+C - CVTA
+M - Two-port Mac Relay
+
+https://community.cisco.com/t5/network-management/cdpcachecapabilities-where-is-the-cdp-spec/td-p/1120164
+-------------------------------------------------------------------------------

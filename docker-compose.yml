@@ -43,21 +43,21 @@ services:
     container_name: router-1
     restart: unless-stopped
     volumes:
-      - ./examples/data/router-1.snmprec:/data/router-1.snmprec
+      - ./examples/data/router-1.snmpwalk:/data/router-1.snmpwalk
 
   router-2:
     build: ./build/router
     container_name: router-2
     restart: unless-stopped
     volumes:
-      - ./examples/data/router-2.snmprec:/data/router-2.snmprec
+      - ./examples/data/router-2.snmpwalk:/data/router-2.snmpwalk
 
   router-3:
     build: ./build/router
     container_name: router-3
     restart: unless-stopped
     volumes:
-      - ./examples/data/router-3.snmprec:/data/router-3.snmprec
+      - ./examples/data/router-3.snmpwalk:/data/router-3.snmpwalk
 
 volumes:
   postgres-map-build:

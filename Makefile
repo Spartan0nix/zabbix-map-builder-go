@@ -4,7 +4,7 @@ SHELL = /bin/bash
 # ------------------------------------------------
 # Docker
 # ------------------------------------------------
-build:
+build-router:
 	docker build -t map-build-router:latest build/router
 
 run-router:
@@ -36,69 +36,95 @@ down:
 # ------------------------------------------------
 # CLI commands
 # ------------------------------------------------
-run:
-	go run main.go --name test-map-builder \
+# - Create
+run-create:
+	go run main.go create --name test-map-builder \
 		--file examples/mapping.json
 
-run-debug:
-	go run main.go --name test-map-builder \
+run-create-debug:
+	go run main.go create --name test-map-builder \
 		--file examples/mapping.json \
 		--debug
 
-run-outfile:
-	go run main.go --name test-map-builder \
+run-create-outfile:
+	go run main.go create --name test-map-builder \
 		--file examples/mapping.json \
 		--output examples/output.json
 
-run-outfile-debug:
-	go run main.go --name test-map-builder \
+run-create-outfile-debug:
+	go run main.go create --name test-map-builder \
 		--file examples/mapping.json \
 		--output examples/output.json \
 		--debug
 
-run-color:
-	go run main.go --name test-map-builder \
+run-create-color:
+	go run main.go create --name test-map-builder \
 		--file examples/mapping.json \
 		--color 7AC2E1 \
 		--trigger-color EE445B
 
-run-color-debug:
-	go run main.go --name test-map-builder \
+run-create-color-debug:
+	go run main.go create --name test-map-builder \
 		--file examples/mapping.json \
 		--color 7AC2E1 \
 		--trigger-color EE445B \
 		--debug
 
-run-dry:
-	go run main.go --name test-map-builder \
+run-create-dry:
+	go run main.go create --name test-map-builder \
 		--file examples/mapping.json \
 		--color 7AC2E1 \
 		--trigger-color EE445B \
 		--dry-run
 
-run-dry-debug:
-	go run main.go --name test-map-builder \
+run-create-dry-debug:
+	go run main.go create --name test-map-builder \
 		--file examples/mapping.json \
 		--color 7AC2E1 \
 		--trigger-color EE445B \
 		--dry-run \
 		--debug
 
-run-unstack-hosts:
-	go run main.go --name test-map-builder \
+run-create-unstack-hosts:
+	go run main.go create --name test-map-builder \
 		--file examples/mapping.json \
 		--output examples/output.json \
 		--color 7AC2E1 \
 		--trigger-color EE445B \
 		--stack-hosts false
 
-run-unstack-hosts-debug:
-	go run main.go --name test-map-builder \
+run-create-unstack-hosts-debug:
+	go run main.go create --name test-map-builder \
 		--file examples/mapping.json \
 		--output examples/output.json \
 		--color 7AC2E1 \
 		--trigger-color EE445B \
 		--stack-hosts false \
+		--debug
+
+# - Generate
+run-generate:
+	go run main.go generate --host 172.16.80.161 \
+		--community router-1 \
+		--port 1161
+
+run-generate-debug:
+	go run main.go generate --host 172.16.80.161 \
+		--community router-1 \
+		--port 1161 \
+		--debug
+
+run-generate-outfile:
+	go run main.go generate --host 172.16.80.161 \
+		--community router-1 \
+		--port 1161 \
+		--output examples/generated_mapping.json
+
+run-generate-outfile-debug:
+	go run main.go generate --host 172.16.80.161 \
+		--community router-1 \
+		--port 1161 \
+		--output examples/generated_mapping.json \
 		--debug
 
 # - HELPER

@@ -127,6 +127,48 @@ run-generate-outfile-debug:
 		--output examples/generated_mapping.json \
 		--debug
 
+run-generate-pattern:
+	go run main.go generate --host 172.16.80.161 \
+		--community router-1 \
+		--port 1161 \
+		--output examples/generated_mapping.json \
+		--trigger-pattern "Interface #INTERFACE(): Link down"
+
+run-generate-pattern-debug:
+	go run main.go generate --host 172.16.80.161 \
+		--community router-1 \
+		--port 1161 \
+		--output examples/generated_mapping.json \
+		--trigger-pattern "Interface #INTERFACE(): Link down" \
+		--debug
+
+run-generate-image:
+	go run main.go generate --host 172.16.80.161 \
+		--community router-1 \
+		--port 1161 \
+		--output examples/generated_mapping.json \
+		--local-host-image "Firewall_(64)" \
+		--remote-host-image "Switch_(64)"
+
+run-generate-image-debug:
+	go run main.go generate --host 172.16.80.161 \
+		--community router-1 \
+		--port 1161 \
+		--output examples/generated_mapping.json \
+		--local-host-image "Firewall_(64)" \
+		--remote-host-image "Switch_(64)" \
+		--debug
+
+run-generate-full:
+	go run main.go generate --host 172.16.80.161 \
+		--community router-1 \
+		--port 1161 \
+		--output examples/generated_mapping.json \
+		--local-host-image "Firewall_(64)" \
+		--remote-host-image "Switch_(64)" \
+		--trigger-pattern "Interface #INTERFACE(): Link down" \
+		--debug
+
 # - HELPER
 help:
 	go run main.go --help

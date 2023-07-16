@@ -1,7 +1,7 @@
 {
     "zabbix_export": {
         "version": "6.0",
-        "date": "2023-06-28T19:16:28Z",
+        "date": "2023-07-16T18:57:12Z",
         "groups": [
             {
                 "uuid": "36bff6c29af64692839d077febfc7079",
@@ -267,7 +267,7 @@
                         ],
                         "triggers": [
                             {
-                                "expression": "{$IFCONTROL:\"eth0\"}=1 and last(/router-1/net.if.status[ifOperStatus.1])=2 and (last(/router-1/net.if.status[ifOperStatus.1],#1)<>last(/router-1/net.if.status[ifOperStatus.1],#2))",
+                                "expression": "{$IFCONTROL:\"eth0\"}=1 and last(/router-1/net.if.status[ifOperStatus.1])=2",
                                 "recovery_mode": "RECOVERY_EXPRESSION",
                                 "recovery_expression": "last(/router-1/net.if.status[ifOperStatus.1])<>2 or {$IFCONTROL:\"eth0\"}=0",
                                 "name": "Interface eth0(): Link down",
@@ -1116,7 +1116,7 @@
                 "dependencies": [
                     {
                         "name": "Interface eth0(): Link down",
-                        "expression": "{$IFCONTROL:\"eth0\"}=1 and last(/router-1/net.if.status[ifOperStatus.1])=2 and (last(/router-1/net.if.status[ifOperStatus.1],#1)<>last(/router-1/net.if.status[ifOperStatus.1],#2))",
+                        "expression": "{$IFCONTROL:\"eth0\"}=1 and last(/router-1/net.if.status[ifOperStatus.1])=2",
                         "recovery_expression": "last(/router-1/net.if.status[ifOperStatus.1])<>2 or {$IFCONTROL:\"eth0\"}=0"
                     }
                 ],

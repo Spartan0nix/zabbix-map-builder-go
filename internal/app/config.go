@@ -8,7 +8,8 @@ import (
 	zbxMap "github.com/Spartan0nix/zabbix-map-builder-go/internal/map"
 )
 
-type Options struct {
+// MapOptions define the options usable during the map creation process
+type MapOptions struct {
 	ZabbixUrl    string
 	ZabbixUser   string
 	ZabbixPwd    string
@@ -23,9 +24,20 @@ type Options struct {
 	DryRun       bool
 }
 
+// GenerateOptions define the options usable during the mapping generation process
+type GenerateOptions struct {
+	Host           string
+	Port           uint16
+	Community      string
+	OutFile        string
+	TriggerPattern string
+	LocalImage     string
+	RemoteImage    string
+}
+
 // GetEnvironmentVariables is used to retrive the required environment variables for the Zabbix API.
-func GetEnvironmentVariables() (*Options, error) {
-	vars := Options{}
+func GetEnvironmentVariables() (*MapOptions, error) {
+	vars := MapOptions{}
 
 	if vars.ZabbixUrl = os.Getenv("ZABBIX_URL"); vars.ZabbixUrl == "" {
 		return nil, fmt.Errorf("required environment variable 'ZABBIX_URL' is not set")

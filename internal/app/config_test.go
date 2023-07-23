@@ -139,7 +139,7 @@ func TestReadInputMissingFile(t *testing.T) {
 }
 
 func TestReadInputWrongType(t *testing.T) {
-	data := Options{
+	data := MapOptions{
 		ZabbixUrl:  ZABBIX_URL,
 		ZabbixUser: ZABBIX_USER,
 	}

@@ -14,3 +14,7 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 .env
+
+# Output of the go benchmarks
+*.prof
+*.test

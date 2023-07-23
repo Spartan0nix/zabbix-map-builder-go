@@ -4,40 +4,27 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"time"
 
-	zabbixgosdk "github.com/Spartan0nix/zabbix-go-sdk/v2"
 	"github.com/Spartan0nix/zabbix-map-builder-go/internal/api"
 	"github.com/Spartan0nix/zabbix-map-builder-go/internal/logging"
 	zbxmap "github.com/Spartan0nix/zabbix-map-builder-go/internal/map"
+	"github.com/Spartan0nix/zabbix-map-builder-go/internal/snmp"
+	"github.com/gosnmp/gosnmp"
 )
 
-func outputToFile(file string, m *zabbixgosdk.MapCreateParameters) error {
+// outputToFile is used to write data to a file.
+func outputToFile(file string, b []byte) error {
 	if file == "" {
 		return fmt.Errorf("file name cannot be empty")
 	}
 
-	b, err := json.Marshal(m)
-	if err != nil {
-		return err
-	}
-
-	f, err := os.Create(file)
-	if err != nil {
-		return err
-	}
-
-	defer f.Close()
-
-	_, err = f.Write(b)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	err := os.WriteFile(file, b, 0640)
+	return err
 }
 
-// RunApp is used to run the main logic of the application.
-func RunApp(file string, options *Options, logger *logging.Logger) error {
+// RunCreate is used to run the main logic for the create command.
+func RunCreate(file string, options *MapOptions, logger *logging.Logger) error {
 	if logger == nil {
 		logger = logging.NewLogger(logging.Warning)
 	}
@@ -114,7 +101,13 @@ func RunApp(file string, options *Options, logger *logging.Logger) error {
 	// Store the create request if asked before executing it on the server
 	if options.OutFile != "" {
 		logger.Debug(fmt.Sprintf("outputting the create request to '%s'", options.OutFile))
-		err = outputToFile(options.OutFile, m)
+
+		b, err := json.Marshal(m)
+		if err != nil {
+			return err
+		}
+
+		err = outputToFile(options.OutFile, b)
 		if err != nil {
 			return err
 		}
@@ -148,4 +141,78 @@ func RunApp(file string, options *Options, logger *logging.Logger) error {
 	// Allow to return errors from the defer function (API logout)
 	logger.Debug("all steps have been passed already, starting the exit process.")
 	return err
+}
+
+// RunGenerate is used to run the main logic for the generate command.
+func RunGenerate(options *GenerateOptions, logger *logging.Logger) error {
+	if logger == nil {
+		logger = logging.NewLogger(logging.Warning)
+	}
+
+	params := &gosnmp.GoSNMP{
+		Target:    options.Host,
+		Port:      options.Port,
+		Community: options.Community,
+		Version:   gosnmp.Version2c,
+		Timeout:   time.Duration(2) * time.Second,
+	}
+
+	err := params.Connect()
+	if err != nil {
+		return err
+	}
+	defer params.Conn.Close()
+
+	// Retrieve the full cdpCacheTable
+	oid := "1.3.6.1.4.1.9.9.23.1.2.1.1"
+	res, err := snmp.WalkBulk(params, oid)
+	if err != nil {
+		return err
+	}
+
+	snmp.LogRequestDuration(logger, res.Duration)
+
+	// Parse the cdpCacheTable to friendlier format
+	cdpEntries := snmp.ParseCdpCache(res.Entries, logger)
+	if len(cdpEntries) == 0 {
+		return fmt.Errorf("no cdp data found on host '%s', check if cdp is up and running on the host", options.Host)
+	}
+
+	// Retrieve each local interface name
+	err = snmp.GetLocalInterfacesName(params, cdpEntries, logger)
+	if err != nil {
+		return err
+	}
+
+	// Retrieve the local hostname
+	localHostname, err := snmp.GetHostname(params, logger)
+	if err != nil {
+		return err
+	}
+
+	// Generate mappings
+	mapping := generateMapping(cdpEntries, localHostname, &mappingOptions{
+		TriggerPattern: options.TriggerPattern,
+		LocalImage:     options.LocalImage,
+		RemoteImage:    options.RemoteImage,
+	})
+
+	// Marshall data
+	b, err := json.Marshal(&mapping)
+	if err != nil {
+		return err
+	}
+
+	if options.OutFile != "" {
+		// Output to a file
+		err = outputToFile(options.OutFile, b)
+		if err != nil {
+			return nil
+		}
+	} else {
+		// Output to the shell
+		fmt.Println(string(b))
+	}
+
+	return nil
 }

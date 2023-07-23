@@ -3,7 +3,6 @@ package app
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/Spartan0nix/zabbix-map-builder-go/internal/api"
@@ -12,16 +11,6 @@ import (
 	"github.com/Spartan0nix/zabbix-map-builder-go/internal/snmp"
 	"github.com/gosnmp/gosnmp"
 )
-
-// outputToFile is used to write data to a file.
-func outputToFile(file string, b []byte) error {
-	if file == "" {
-		return fmt.Errorf("file name cannot be empty")
-	}
-
-	err := os.WriteFile(file, b, 0640)
-	return err
-}
 
 // RunCreate is used to run the main logic for the create command.
 func RunCreate(file string, options *MapOptions, logger *logging.Logger) error {

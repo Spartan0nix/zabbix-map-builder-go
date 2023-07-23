@@ -16,22 +16,28 @@ type mappingOptions struct {
 
 // generateMapping is used to generate a list of hosts mapping.
 func generateMapping(entries []*snmp.SnmpCdpEntry, localHostname string, opts *mappingOptions) []*zbxmap.Mapping {
-	mappings := make([]*zbxmap.Mapping, 0)
-	re := regexp.MustCompile(`#INTERFACE`)
+	mappings := make([]*zbxmap.Mapping, len(entries))
+	var re *regexp.Regexp
 
-	for _, entry := range entries {
-		localPattern, remotePattern := buildTriggerPattern(re, opts, entry.LocalPort, entry.Port)
+	if opts.TriggerPattern != "" {
+		re = regexp.MustCompile(`#INTERFACE`)
+	}
 
-		mappings = append(mappings, &zbxmap.Mapping{
+	for i := range entries {
+		localPattern, remotePattern := buildTriggerPattern(re, `#INTERFACE`, opts, entries[i].LocalPort, entries[i].Port)
+
+		mappings[i] = &zbxmap.Mapping{
 			LocalHost:            localHostname,
-			LocalInterface:       entry.LocalPort,
+			LocalInterface:       entries[i].LocalPort,
 			LocalTriggerPattern:  localPattern,
 			LocalImage:           opts.LocalImage,
-			RemoteHost:           entry.DeviceId,
-			RemoteInterface:      entry.Port,
+			RemoteHost:           entries[i].DeviceId,
+			RemoteInterface:      entries[i].Port,
 			RemoteTriggerPattern: remotePattern,
 			RemoteImage:          opts.RemoteImage,
-		})
+		}
+
+		i++
 	}
 
 	return mappings
@@ -39,13 +45,12 @@ func generateMapping(entries []*snmp.SnmpCdpEntry, localHostname string, opts *m
 
 // buildTriggerPattern is used to build trigger patterns for a mapping.
 // Returns local, remote patterns
-func buildTriggerPattern(re *regexp.Regexp, opts *mappingOptions, localPort string, remotePort string) (string, string) {
-	var local string
-	var remote string
+func buildTriggerPattern(re *regexp.Regexp, reString string, opts *mappingOptions, localPort string, remotePort string) (string, string) {
+	var local, remote string
 
 	if opts.TriggerPattern != "" {
-		local = replaceInterface(re, opts.TriggerPattern, localPort)
-		remote = replaceInterface(re, opts.TriggerPattern, remotePort)
+		local = replaceInterface(re, reString, opts.TriggerPattern, localPort)
+		remote = replaceInterface(re, reString, opts.TriggerPattern, remotePort)
 	} else {
 		local = ""
 		remote = ""
@@ -54,14 +59,13 @@ func buildTriggerPattern(re *regexp.Regexp, opts *mappingOptions, localPort stri
 	return local, remote
 }
 
-// replaceInterface is used to replace the value of 're' in 'p' by 'i' if 're' is present in 'p'.
+// replaceInterface is used to replace the value of 'reString' in 'p' by 'i' if 'reString' is present in 'p'.
 // Otherwise return 'p' as it is.
-func replaceInterface(re *regexp.Regexp, p string, i string) string {
-	match := re.FindStringSubmatch(p)
-
-	if len(match) == 0 {
-		return p
+func replaceInterface(re *regexp.Regexp, reString string, p string, i string) string {
+	match := re.Match([]byte(p))
+	if match {
+		p = strings.Replace(p, reString, i, -1)
 	}
 
-	return strings.Replace(p, re.String(), i, -1)
+	return p
 }

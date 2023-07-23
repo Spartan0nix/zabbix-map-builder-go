@@ -2,7 +2,6 @@ package app
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -11,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	zabbixgosdk "github.com/Spartan0nix/zabbix-go-sdk/v2"
+	"github.com/Spartan0nix/zabbix-map-builder-go/internal/logging"
 )
 
 const (
@@ -29,48 +28,6 @@ func generateMapName() string {
 	value := rand.Intn(rand.Intn(9999))
 
 	return fmt.Sprintf("test-map-builder-%d", value)
-}
-
-func TestOutputToFile(t *testing.T) {
-	file := "test-output-file.json"
-	p := &zabbixgosdk.MapCreateParameters{
-		Map: zabbixgosdk.Map{
-			Name: "test-zabbix-map-builder",
-		},
-	}
-
-	b, err := json.Marshal(p)
-	if err != nil {
-		t.Fatalf("error while marshaling data.\nReason : %v", err)
-	}
-
-	err = outputToFile(file, b)
-	if err != nil {
-		t.Fatalf("error while execution outputToFile function.\nReason : %v", err)
-	}
-
-	info, err := os.Stat(file)
-	if err != nil {
-		t.Fatalf("error while retrieving information about the file '%s'.\nReason : %v", file, err)
-	}
-
-	if info == nil {
-		t.Fatalf("no info was retrieved about the file '%s'", file)
-	}
-
-	err = os.Remove(file)
-	if err != nil {
-		t.Fatalf("error while removing file '%s'.\nReason : %v", file, err)
-	}
-}
-
-func TestOutputToFileEmptyName(t *testing.T) {
-	b := make([]byte, 0)
-
-	err := outputToFile("", b)
-	if err == nil {
-		t.Fatal("an error should be returned when an empty file name is passed to the outputToFile function")
-	}
 }
 
 func TestRunCreate(t *testing.T) {
@@ -201,6 +158,26 @@ func TestRunCreateFailInitApi(t *testing.T) {
 	}
 }
 
+func BenchmarkRunCreate(b *testing.B) {
+	opts := MapOptions{
+		ZabbixUrl:    ZABBIX_URL,
+		ZabbixUser:   ZABBIX_USER,
+		ZabbixPwd:    ZABBIX_PWD,
+		Color:        "7AC2E1",
+		TriggerColor: "EE445B",
+		Width:        "400",
+		Height:       "400",
+		Spacer:       50,
+	}
+
+	logger := logging.NewLogger(logging.Warning)
+
+	for i := 0; i < b.N; i++ {
+		opts.Name = generateMapName()
+		RunCreate(mappingFilePath, &opts, logger)
+	}
+}
+
 func TestRunGenerate(t *testing.T) {
 	// Keep the previous stdout file
 	oldStdout := os.Stdout
@@ -299,13 +276,25 @@ func TestRunGenerateFail(t *testing.T) {
 	}
 }
 
-func BenchmarkOutputToFile(b *testing.B) {
-	data := []byte("random-test")
+// Set the required arguments
+var benchGenerateOpts = GenerateOptions{
+	Host:           router,
+	Port:           port,
+	Community:      community,
+	TriggerPattern: "Interface #INTERFACE down",
+	LocalImage:     "Switch_(64)",
+	RemoteImage:    "Switch_(64)",
+}
+
+var benchLogger = logging.NewLogger(logging.Warning)
+
+func BenchmarkRunGenerate(b *testing.B) {
+	oldStdout := os.Stdout
+	os.Stdout = nil
 
 	for i := 0; i < b.N; i++ {
-		fileName := fmt.Sprintf("benchmark-output-file-%d", i)
-
-		outputToFile(fileName, data)
-		os.Remove(fileName)
+		RunGenerate(&benchGenerateOpts, benchLogger)
 	}
+
+	os.Stdout = oldStdout
 }

@@ -116,6 +116,12 @@ func TestGetEnvironmentVariablesMissingPwd(t *testing.T) {
 	}
 }
 
+func BenchmarkGetEnvironmentVariables(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		GetEnvironmentVariables()
+	}
+}
+
 func TestReadInput(t *testing.T) {
 	m, err := ReadInput(mappingFilePath)
 	if err != nil {
@@ -187,5 +193,11 @@ func TestReadInputNoData(t *testing.T) {
 	err = os.Remove(testFile)
 	if err != nil {
 		t.Fatalf("error while removing file '%s'.\nReason : %v", testFile, err)
+	}
+}
+
+func BenchmarkReadInput(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		ReadInput(mappingFilePath)
 	}
 }

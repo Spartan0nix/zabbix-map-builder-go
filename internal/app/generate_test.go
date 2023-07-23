@@ -7,18 +7,22 @@ import (
 	"github.com/Spartan0nix/zabbix-map-builder-go/internal/snmp"
 )
 
-func TestGenerateMapping(t *testing.T) {
-	e := make([]*snmp.SnmpCdpEntry, 0)
-	e = append(e, &snmp.SnmpCdpEntry{
+var SnmpCdpEntries = []*snmp.SnmpCdpEntry{
+	{
 		Address:        []uint8{00, 00, 00, 01},
 		DeviceId:       "remote-router",
 		Port:           "eth1",
 		Capabilities:   []uint8{00, 00, 00, 02},
 		LocalPortIndex: "1",
 		LocalPort:      "eth0",
-	})
+	},
+}
 
-	m := generateMapping(e, "local-router", &mappingOptions{
+var re = regexp.MustCompile(`#pattern-to-replace`)
+var reString = `#pattern-to-replace`
+
+func TestGenerateMapping(t *testing.T) {
+	m := generateMapping(SnmpCdpEntries, "local-router", &mappingOptions{
 		TriggerPattern: "Interface #INTERFACE is down",
 		LocalImage:     "Switch_(64)",
 		RemoteImage:    "Firewall_(64)",
@@ -62,13 +66,32 @@ func TestGenerateMapping(t *testing.T) {
 	}
 }
 
+func BenchmarkGenerateMapping(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		generateMapping(SnmpCdpEntries, "local-router", &mappingOptions{
+			TriggerPattern: "",
+			LocalImage:     "Switch_(64)",
+			RemoteImage:    "Firewall_(64)",
+		})
+	}
+}
+
+func BenchmarkGenerateMappingTriggerPattern(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		generateMapping(SnmpCdpEntries, "local-router", &mappingOptions{
+			TriggerPattern: "Interface #INTERFACE is down",
+			LocalImage:     "Switch_(64)",
+			RemoteImage:    "Firewall_(64)",
+		})
+	}
+}
+
 func TestBuildTriggerPattern(t *testing.T) {
-	re := regexp.MustCompile(`#pattern-to-replace`)
 	opts := mappingOptions{
 		TriggerPattern: "Interface #pattern-to-replace is down",
 	}
 
-	l, r := buildTriggerPattern(re, &opts, "local", "remote")
+	l, r := buildTriggerPattern(re, reString, &opts, "local", "remote")
 
 	if l != "Interface local is down" {
 		t.Fatalf("wrong local trigger format returned\nExpected : %s\nReturned : %s", "Interface local is down", l)
@@ -80,12 +103,11 @@ func TestBuildTriggerPattern(t *testing.T) {
 }
 
 func TestBuildTriggerPatternNoUpdate(t *testing.T) {
-	re := regexp.MustCompile(`#pattern-to-replace`)
 	opts := mappingOptions{
 		TriggerPattern: "Interface is down",
 	}
 
-	l, r := buildTriggerPattern(re, &opts, "local", "remote")
+	l, r := buildTriggerPattern(re, reString, &opts, "local", "remote")
 
 	if l != "Interface is down" {
 		t.Fatalf("wrong local trigger format returned\nExpected : %s\nReturned : %s", "Interface is down", l)
@@ -96,11 +118,43 @@ func TestBuildTriggerPatternNoUpdate(t *testing.T) {
 	}
 }
 
+func BenchmarkBuildTriggerPattern(b *testing.B) {
+	opts := mappingOptions{
+		TriggerPattern: "Interface #INTERFACE is down",
+	}
+
+	for i := 0; i < b.N; i++ {
+		buildTriggerPattern(re, reString, &opts, "local", "remote")
+	}
+}
+
+func BenchmarkBuildTriggerPatternNoUpdate(b *testing.B) {
+	opts := mappingOptions{
+		TriggerPattern: "Interface is down",
+	}
+
+	for i := 0; i < b.N; i++ {
+		buildTriggerPattern(re, reString, &opts, "local", "remote")
+	}
+}
+
 func TestReplaceInterface(t *testing.T) {
 	re := regexp.MustCompile(`#pattern-to-replace`)
-	s := replaceInterface(re, "value : #pattern-to-replace", "new-value")
+	s := replaceInterface(re, `#pattern-to-replace`, "value : #pattern-to-replace", "new-value")
 
 	if s != "value : new-value" {
 		t.Fatalf("wrong value returned\nExpected : %s\nReturned : %s", "value : new-value", s)
+	}
+}
+
+func BenchmarkReplaceInterface(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		replaceInterface(re, reString, "Interface #INTERFACE is down", "eth0")
+	}
+}
+
+func BenchmarkReplaceInterfaceNoUpdate(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		replaceInterface(re, reString, "Interface is down", "eth0")
 	}
 }

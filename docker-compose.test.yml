@@ -4,51 +4,87 @@ services:
   # -------------------------------------
   testing-postgres:
     image: docker.io/postgres:13.8-alpine3.16
-    container_name: postgres
+    container_name: testing-postgres
     environment:
       - POSTGRES_USER=zabbix
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=zabbix
+    networks:
+      testing-zabbix-network:
+        ipv4_address: 172.16.81.10
   
   testing-zabbix-server:
     image: docker.io/zabbix/zabbix-server-pgsql:alpine-6.0-latest
-    container_name: zabbix-server
+    container_name: testing-zabbix-server
     environment:
-      - DB_SERVER_HOST=postgres
+      - DB_SERVER_HOST=testing-postgres
       - POSTGRES_USER=zabbix
       - POSTGRES_PASSWORD=password
+    networks:
+      testing-zabbix-network:
+        ipv4_address: 172.16.81.11
+      testing-router-network:
+        ipv4_address: 172.16.81.138
   
   testing-zabbix-web:
     image: docker.io/zabbix/zabbix-web-nginx-pgsql:alpine-6.0-latest
-    container_name: zabbix-web
+    container_name: testing-zabbix-web
     ports:
       - "4444:8080"
     environment:
-      - DB_SERVER_HOST=postgres
+      - DB_SERVER_HOST=testing-postgres
       - POSTGRES_USER=zabbix
       - POSTGRES_PASSWORD=password
-      - ZBX_SERVER_HOST=zabbix-server
+      - ZBX_SERVER_HOST=testing-zabbix-server
       - PHP_TZ=Europe/Paris
-  # # -------------------------------------
-  # # Routers
-  # # -------------------------------------
-  # router-1:
-  #   build: ./build/router
-  #   container_name: router-1
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./examples/data/router-1.snmpwalk:/data/router-1.snmpwalk
+    networks:
+      testing-zabbix-network:
+        ipv4_address: 172.16.81.12
 
-  # router-2:
-  #   build: ./build/router
-  #   container_name: router-2
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./examples/data/router-2.snmpwalk:/data/router-2.snmpwalk
+  # -------------------------------------
+  # Routers
+  # -------------------------------------
+  testing-router-1:
+    build: ./build/router
+    container_name: testing-router-1
+    restart: unless-stopped
+    volumes:
+      - ./examples/data/router-1.snmpwalk:/data/router-1.snmpwalk
+    networks:
+      testing-router-network:
+        ipv4_address: 172.16.81.161
 
-  # router-3:
+  testing-router-2:
+    build: ./build/router
+    container_name: testing-router-2
+    restart: unless-stopped
+    volumes:
+      - ./examples/data/router-2.snmpwalk:/data/router-2.snmpwalk
+    networks:
+      testing-router-network:
+        ipv4_address: 172.16.81.162
+
+  # testing-router-3:
   #   build: ./build/router
-  #   container_name: router-3
+  #   container_name: testing-router-3
   #   restart: unless-stopped
   #   volumes:
   #     - ./examples/data/router-3.snmpwalk:/data/router-3.snmpwalk
+  #   networks:
+  #     testing-router-network:
+  #       ipv4_address: 172.16.81.163
+
+
+networks:
+  testing-zabbix-network:
+    ipam:
+      config:
+        - subnet: 172.16.81.0/25
+          ip_range: 172.16.81.1/25
+          gateway: 172.16.81.126
+  testing-router-network:
+    ipam:
+      config:
+        - subnet: 172.16.81.128/25
+          ip_range: 172.16.81.129/25
+          gateway: 172.16.81.254

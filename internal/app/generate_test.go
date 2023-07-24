@@ -1,7 +1,7 @@
 package app
 
 import (
-	"regexp"
+	"fmt"
 	"testing"
 
 	"github.com/Spartan0nix/zabbix-map-builder-go/internal/snmp"
@@ -18,8 +18,7 @@ var SnmpCdpEntries = []*snmp.SnmpCdpEntry{
 	},
 }
 
-var re = regexp.MustCompile(`#pattern-to-replace`)
-var reString = `#pattern-to-replace`
+var pattern = `#pattern-to-replace`
 
 func TestGenerateMapping(t *testing.T) {
 	m := generateMapping(SnmpCdpEntries, "local-router", &mappingOptions{
@@ -91,7 +90,7 @@ func TestBuildTriggerPattern(t *testing.T) {
 		TriggerPattern: "Interface #pattern-to-replace is down",
 	}
 
-	l, r := buildTriggerPattern(re, reString, &opts, "local", "remote")
+	l, r := buildTriggerPattern(pattern, &opts, "local", "remote")
 
 	if l != "Interface local is down" {
 		t.Fatalf("wrong local trigger format returned\nExpected : %s\nReturned : %s", "Interface local is down", l)
@@ -107,7 +106,7 @@ func TestBuildTriggerPatternNoUpdate(t *testing.T) {
 		TriggerPattern: "Interface is down",
 	}
 
-	l, r := buildTriggerPattern(re, reString, &opts, "local", "remote")
+	l, r := buildTriggerPattern(pattern, &opts, "local", "remote")
 
 	if l != "Interface is down" {
 		t.Fatalf("wrong local trigger format returned\nExpected : %s\nReturned : %s", "Interface is down", l)
@@ -124,7 +123,7 @@ func BenchmarkBuildTriggerPattern(b *testing.B) {
 	}
 
 	for i := 0; i < b.N; i++ {
-		buildTriggerPattern(re, reString, &opts, "local", "remote")
+		buildTriggerPattern(pattern, &opts, "local", "remote")
 	}
 }
 
@@ -134,13 +133,12 @@ func BenchmarkBuildTriggerPatternNoUpdate(b *testing.B) {
 	}
 
 	for i := 0; i < b.N; i++ {
-		buildTriggerPattern(re, reString, &opts, "local", "remote")
+		buildTriggerPattern(pattern, &opts, "local", "remote")
 	}
 }
 
 func TestReplaceInterface(t *testing.T) {
-	re := regexp.MustCompile(`#pattern-to-replace`)
-	s := replaceInterface(re, `#pattern-to-replace`, "value : #pattern-to-replace", "new-value")
+	s := replaceInterface(pattern, fmt.Sprintf("value : %s", pattern), "new-value")
 
 	if s != "value : new-value" {
 		t.Fatalf("wrong value returned\nExpected : %s\nReturned : %s", "value : new-value", s)
@@ -149,12 +147,12 @@ func TestReplaceInterface(t *testing.T) {
 
 func BenchmarkReplaceInterface(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		replaceInterface(re, reString, "Interface #INTERFACE is down", "eth0")
+		replaceInterface(pattern, "Interface #INTERFACE is down", "eth0")
 	}
 }
 
 func BenchmarkReplaceInterfaceNoUpdate(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		replaceInterface(re, reString, "Interface is down", "eth0")
+		replaceInterface(pattern, "Interface is down", "eth0")
 	}
 }

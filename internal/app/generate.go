@@ -1,7 +1,6 @@
 package app
 
 import (
-	"regexp"
 	"strings"
 
 	zbxmap "github.com/Spartan0nix/zabbix-map-builder-go/internal/map"
@@ -17,14 +16,9 @@ type mappingOptions struct {
 // generateMapping is used to generate a list of hosts mapping.
 func generateMapping(entries []*snmp.SnmpCdpEntry, localHostname string, opts *mappingOptions) []*zbxmap.Mapping {
 	mappings := make([]*zbxmap.Mapping, len(entries))
-	var re *regexp.Regexp
-
-	if opts.TriggerPattern != "" {
-		re = regexp.MustCompile(`#INTERFACE`)
-	}
 
 	for i := range entries {
-		localPattern, remotePattern := buildTriggerPattern(re, `#INTERFACE`, opts, entries[i].LocalPort, entries[i].Port)
+		localPattern, remotePattern := buildTriggerPattern(`#INTERFACE`, opts, entries[i].LocalPort, entries[i].Port)
 
 		mappings[i] = &zbxmap.Mapping{
 			LocalHost:            localHostname,
@@ -45,12 +39,12 @@ func generateMapping(entries []*snmp.SnmpCdpEntry, localHostname string, opts *m
 
 // buildTriggerPattern is used to build trigger patterns for a mapping.
 // Returns local, remote patterns
-func buildTriggerPattern(re *regexp.Regexp, reString string, opts *mappingOptions, localPort string, remotePort string) (string, string) {
+func buildTriggerPattern(pattern string, opts *mappingOptions, localPort string, remotePort string) (string, string) {
 	var local, remote string
 
 	if opts.TriggerPattern != "" {
-		local = replaceInterface(re, reString, opts.TriggerPattern, localPort)
-		remote = replaceInterface(re, reString, opts.TriggerPattern, remotePort)
+		local = replaceInterface(pattern, opts.TriggerPattern, localPort)
+		remote = replaceInterface(pattern, opts.TriggerPattern, remotePort)
 	} else {
 		local = ""
 		remote = ""
@@ -59,13 +53,13 @@ func buildTriggerPattern(re *regexp.Regexp, reString string, opts *mappingOption
 	return local, remote
 }
 
-// replaceInterface is used to replace the value of 'reString' in 'p' by 'i' if 'reString' is present in 'p'.
-// Otherwise return 'p' as it is.
-func replaceInterface(re *regexp.Regexp, reString string, p string, i string) string {
-	match := re.Match([]byte(p))
+// replaceInterface is used to replace the value of 'pattern' in 's' by 'i' if 'pattern' is present in 's'.
+// Otherwise return 's' as it is.
+func replaceInterface(pattern string, s string, i string) string {
+	match := strings.Contains(s, pattern)
 	if match {
-		p = strings.Replace(p, reString, i, -1)
+		s = strings.Replace(s, pattern, i, -1)
 	}
 
-	return p
+	return s
 }

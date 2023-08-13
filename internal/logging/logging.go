@@ -56,7 +56,7 @@ func (l *Logger) setFlags() {
 
 // log is used as a wrapper function to log the given data while handling logger flags, prefix and content assignments.
 func (l *Logger) writeLog(level LogLevel, v ...any) {
-	// Do not write log if the level is not configured
+	// Do not write log if the current logLevel is greater than the maximum acceptable level of the logger
 	if level <= l.Level {
 		// Set the logger flags
 		l.setFlags()
@@ -83,9 +83,7 @@ func (l *Logger) writeLog(level LogLevel, v ...any) {
 
 		} else {
 			// Log all entries to the shell
-			for _, entry := range v {
-				l.logger.Println(entry)
-			}
+			l.logger.Println(v...)
 		}
 	}
 }

@@ -9,13 +9,21 @@ import (
 
 var testLogger *Logger
 
+func init() {
+	testLogger = NewLogger(Debug)
+}
+
 func TestNewLogger(t *testing.T) {
 	l := NewLogger(Debug)
 	if l == nil {
 		t.Fatal("A nil pointer was returned instead of *Logger")
 	}
+}
 
-	testLogger = l
+func BenchmarkNewLogger(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		NewLogger(Debug)
+	}
 }
 
 func TestGetLevel(t *testing.T) {
@@ -41,10 +49,22 @@ func TestGetLevel(t *testing.T) {
 
 }
 
+func BenchmarkGetLevel(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		getLevel(Debug)
+	}
+}
+
 func TestSetFlags(t *testing.T) {
 	testLogger.setFlags()
 	if testLogger.logger.Flags() != log.Lmsgprefix {
 		t.Fatalf("Wrong logger flags set\nExpected : %d\nReturned : %d", log.Lmsgprefix, testLogger.logger.Flags())
+	}
+}
+
+func BenchmarkSetFlags(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		testLogger.setFlags()
 	}
 }
 
@@ -83,6 +103,15 @@ func TestWriteLogPanic(t *testing.T) {
 	}
 }
 
+func BenchmarkWriteLog(b *testing.B) {
+	var buf bytes.Buffer
+	testLogger.logger.SetOutput(&buf)
+
+	for i := 0; i < b.N; i++ {
+		testLogger.writeLog(Info, "bench-value")
+	}
+}
+
 func TestCritical(t *testing.T) {
 	defer func() {
 		if err := recover(); err == nil {
@@ -115,7 +144,6 @@ func TestError(t *testing.T) {
 	if !strings.Contains(buf.String(), expectedOutput) {
 		t.Fatalf("Wrong log format returned\nExpected '%s' to be present in the output string\nReturned : %s", expectedOutput, buf.String())
 	}
-
 }
 
 func TestWarning(t *testing.T) {

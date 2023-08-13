@@ -2,6 +2,7 @@ package _map
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"testing"
 	"time"
@@ -14,6 +15,46 @@ const (
 	ZABBIX_USER = "Admin"
 	ZABBIX_PWD  = "zabbix"
 )
+
+var testingClient *zabbixgosdk.ZabbixService
+var routersId = make(map[string]string, 0)
+
+func init() {
+	testingClient = zabbixgosdk.NewZabbixService()
+	testingClient.SetUrl(ZABBIX_URL)
+	testingClient.SetUser(&zabbixgosdk.ApiUser{
+		User: ZABBIX_USER,
+		Pwd:  ZABBIX_PWD,
+	})
+
+	err := testingClient.Authenticate()
+	if err != nil {
+		log.Fatalf("error during Zabbix API authentification.\nReason : %v", err)
+	}
+
+	// Retrieve the hosts id
+	routers, err := testingClient.Host.Get(&zabbixgosdk.HostGetParameters{
+		Filter: map[string][]string{
+			"host": {
+				"router-1",
+				"router-2",
+				"router-3",
+			},
+		},
+		Output: []string{
+			"hostid",
+			"name",
+		},
+	})
+
+	if err != nil {
+		log.Fatalf("error while retrieving the hosts id\nReason : %v", err)
+	}
+
+	for _, router := range routers {
+		routersId[router.Name] = router.HostId
+	}
+}
 
 // generateMapName is used to generate a random name for each map created during test.
 func generateMapName() string {
@@ -106,7 +147,7 @@ func TestValidateFailName(t *testing.T) {
 func TestValidateFailColor(t *testing.T) {
 	opts := MapOptions{
 		Name:         "test-map",
-		Color:        "xm^ù",
+		Color:        "xmù",
 		TriggerColor: "DD0000",
 		Mappings: []*Mapping{
 			{
@@ -212,61 +253,190 @@ func TestValidateFailImages(t *testing.T) {
 	}
 }
 
-func TestBuildElementsId(t *testing.T) {
-	zbxMap := &zabbixgosdk.MapCreateParameters{
-		Elements: []*zabbixgosdk.MapElement{
+func BenchmarkValidate(b *testing.B) {
+	var opts = MapOptions{
+		Name:         "test-map",
+		Color:        "EEDDFF",
+		TriggerColor: "EEDDFF",
+		Mappings: []*Mapping{
 			{
-				Id: "1",
-				Elements: []zabbixgosdk.MapElementHost{
-					{
-						Id: "1",
-					},
-				},
+				LocalHost: "local-host",
 			},
+		},
+		Hosts: map[string]string{
+			"local-host": "",
+		},
+		Images: map[string]string{
+			"Firewall_(64)": "",
 		},
 	}
 
-	local, remote := buildElementsId(zbxMap, "1", "2")
-
-	if local != "1-2" {
-		t.Fatalf("local id should have been incremented.\nExpected : '1-1'\nReturned : %s", local)
-	}
-
-	if remote != "2" {
-		t.Fatalf("remote id should not have been incremented.\nExpected : '2'\nReturned : %s", remote)
+	for i := 0; i < b.N; i++ {
+		opts.Validate()
 	}
 }
 
-func TestBuildElementsIdNoIncrement(t *testing.T) {
-	zbxMap := &zabbixgosdk.MapCreateParameters{}
-
-	local, remote := buildElementsId(zbxMap, "1", "2")
-
-	if local != "1" {
-		t.Fatalf("local id should not have been incremented.\nExpected : '1'\nReturned : %s", local)
+func TestBuildMap(t *testing.T) {
+	opts := &MapOptions{
+		Name:         "test-build-map",
+		Color:        "000000",
+		TriggerColor: "DD0000",
+		Height:       600,
+		Width:        600,
+		Spacer:       100,
+		StackHosts:   true,
+		Mappings: []*Mapping{
+			{
+				LocalHost:            "router-1",
+				LocalInterface:       "eth0",
+				LocalTriggerPattern:  "Interface eth0(): Link down",
+				LocalImage:           "Firewall_(64)",
+				RemoteHost:           "router-2",
+				RemoteInterface:      "eth0",
+				RemoteTriggerPattern: "Interface eth0(): Link down",
+				RemoteImage:          "Switch_(64)",
+			},
+		},
+		Hosts: map[string]string{
+			"router-1": routersId["router-1"],
+			"router-2": routersId["router-2"],
+		},
+		Images: map[string]string{
+			"Firewall_(64)": "10",
+			"Switch_(64)":   "11",
+		},
 	}
 
-	if remote != "2" {
-		t.Fatalf("remote id should not have been incremented.\nExpected : '2'\nReturned : %s", remote)
+	zbxMap, err := BuildMap(testingClient, opts)
+	if err != nil {
+		t.Fatalf("error while executing BuildMap function\nReason : %v", err)
+	}
+
+	if zbxMap.Name != "test-build-map" {
+		t.Fatalf("wrong map name assigned\nExpected : %s\nReturned : %s", "test-build-map", zbxMap.Name)
+	}
+
+	if zbxMap.Height != "600" {
+		t.Fatalf("wrong map height assigned\nExpected : %s\nReturned : %s", "600", zbxMap.Height)
+	}
+
+	if zbxMap.Width != "600" {
+		t.Fatalf("wrong map width assigned\nExpected : %s\nReturned : %s", "600", zbxMap.Width)
+	}
+
+	if len(zbxMap.Elements) != 2 {
+		t.Fatalf("wrong number of map elements\nExpected : %s\nReturned : %d", "2", len(zbxMap.Elements))
+	}
+}
+
+func TestBuildMapUnstackedHosts(t *testing.T) {
+	opts := &MapOptions{
+		Name:         "test-build-map-unstacked",
+		Color:        "000000",
+		TriggerColor: "DD0000",
+		Height:       600,
+		Width:        600,
+		Spacer:       100,
+		StackHosts:   false,
+		Mappings: []*Mapping{
+			{
+				LocalHost:            "router-1",
+				LocalInterface:       "eth0",
+				LocalTriggerPattern:  "Interface eth0(): Link down",
+				LocalImage:           "Firewall_(64)",
+				RemoteHost:           "router-2",
+				RemoteInterface:      "eth0",
+				RemoteTriggerPattern: "Interface eth0(): Link down",
+				RemoteImage:          "Switch_(64)",
+			},
+			{
+				LocalHost:            "router-1",
+				LocalInterface:       "eth1",
+				LocalTriggerPattern:  "Interface eth1(): Link down",
+				LocalImage:           "Firewall_(64)",
+				RemoteHost:           "router-2",
+				RemoteInterface:      "eth1",
+				RemoteTriggerPattern: "Interface eth1(): Link down",
+				RemoteImage:          "Switch_(64)",
+			},
+		},
+		Hosts: map[string]string{
+			"router-1": routersId["router-1"],
+			"router-2": routersId["router-2"],
+		},
+		Images: map[string]string{
+			"Firewall_(64)": "10",
+			"Switch_(64)":   "11",
+		},
+	}
+
+	zbxMap, err := BuildMap(testingClient, opts)
+	if err != nil {
+		t.Fatalf("error while executing BuildMap function\nReason : %v", err)
+	}
+
+	if zbxMap.Name != "test-build-map-unstacked" {
+		t.Fatalf("wrong map name assigned\nExpected : %s\nReturned : %s", "test-build-map-unstacked", zbxMap.Name)
+	}
+
+	if zbxMap.Height != "600" {
+		t.Fatalf("wrong map height assigned\nExpected : %s\nReturned : %s", "600", zbxMap.Height)
+	}
+
+	if zbxMap.Width != "600" {
+		t.Fatalf("wrong map width assigned\nExpected : %s\nReturned : %s", "600", zbxMap.Width)
+	}
+
+	for _, r := range zbxMap.Elements {
+		t.Log(r.Id)
+		t.Log(r.Elements.([]zabbixgosdk.MapElementHost)[0].Id)
+		t.Log("---")
+	}
+
+	if len(zbxMap.Elements) != 4 {
+		t.Fatalf("wrong number of map elements\nExpected : %s\nReturned : %d", "4", len(zbxMap.Elements))
+	}
+}
+
+func BenchmarkBuildMap(b *testing.B) {
+	// Build the mapOptions
+	opts := &MapOptions{
+		Name:         "test-build-map",
+		Color:        "000000",
+		TriggerColor: "DD0000",
+		Height:       600,
+		Width:        600,
+		Spacer:       100,
+		StackHosts:   true,
+		Mappings: []*Mapping{
+			{
+				LocalHost:            "router-1",
+				LocalInterface:       "eth0",
+				LocalTriggerPattern:  "Interface eth0(): Link down",
+				LocalImage:           "Firewall_(64)",
+				RemoteHost:           "router-2",
+				RemoteInterface:      "eth0",
+				RemoteTriggerPattern: "Interface eth0(): Link down",
+				RemoteImage:          "Switch_(64)",
+			},
+		},
+		Hosts: map[string]string{
+			"router-1": routersId["router-1"],
+			"router-2": routersId["router-2"],
+		},
+		Images: map[string]string{
+			"Firewall_(64)": "10",
+			"Switch_(64)":   "11",
+		},
+	}
+
+	for i := 0; i < b.N; i++ {
+		BuildMap(testingClient, opts)
 	}
 }
 
 func TestCreateMap(t *testing.T) {
-	client := zabbixgosdk.NewZabbixService()
-	client.SetUrl(ZABBIX_URL)
-	client.SetUser(&zabbixgosdk.ApiUser{
-		User: ZABBIX_USER,
-		Pwd:  ZABBIX_PWD,
-	})
-
-	defer client.Logout()
-
-	err := client.Authenticate()
-	if err != nil {
-		t.Fatalf("error during Zabbix API authentification.\nReason : %v", err)
-	}
-
-	err = CreateMap(client, &zabbixgosdk.MapCreateParameters{
+	err := CreateMap(testingClient, &zabbixgosdk.MapCreateParameters{
 		Map: zabbixgosdk.Map{
 			Height: "800",
 			Width:  "800",
@@ -276,5 +446,19 @@ func TestCreateMap(t *testing.T) {
 
 	if err != nil {
 		t.Fatalf("error when executing CreateMap function.\nReason : %v", err)
+	}
+}
+
+func BenchmarkCreateMap(b *testing.B) {
+	params := &zabbixgosdk.MapCreateParameters{
+		Map: zabbixgosdk.Map{
+			Height: "800",
+			Width:  "800",
+		},
+	}
+
+	for i := 0; i < b.N; i++ {
+		params.Name = generateMapName()
+		CreateMap(testingClient, params)
 	}
 }

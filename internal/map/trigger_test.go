@@ -7,21 +7,7 @@ import (
 )
 
 func TestGetTriggerId(t *testing.T) {
-	client := zabbixgosdk.NewZabbixService()
-	client.SetUrl(ZABBIX_URL)
-	client.SetUser(&zabbixgosdk.ApiUser{
-		User: ZABBIX_USER,
-		Pwd:  ZABBIX_PWD,
-	})
-
-	defer client.Logout()
-
-	err := client.Authenticate()
-	if err != nil {
-		t.Fatalf("error during Zabbix API authentification.\nReason : %v", err)
-	}
-
-	h, err := client.Host.Get(&zabbixgosdk.HostGetParameters{
+	h, err := testingClient.Host.Get(&zabbixgosdk.HostGetParameters{
 		Filter: map[string]string{
 			"host": "Zabbix server",
 		},
@@ -35,13 +21,33 @@ func TestGetTriggerId(t *testing.T) {
 		t.Fatal("an empty list of hosts was returned")
 	}
 
-	triggerId, err := getTriggerId(client, h[0].HostId, "High CPU utilization")
+	triggerId, err := getTriggerId(testingClient, h[0].HostId, "High CPU utilization")
 	if err != nil {
 		t.Fatalf("error when executing getTriggerId function.\nReason : %v", err)
 	}
 
 	if triggerId == "" {
 		t.Fatalf("no trigger matching the pattern was found for host '%s'", h[0].HostId)
+	}
+}
+
+func BenchmarkGetTriggerId(b *testing.B) {
+	h, err := testingClient.Host.Get(&zabbixgosdk.HostGetParameters{
+		Filter: map[string]string{
+			"host": "Zabbix server",
+		},
+	})
+
+	if err != nil {
+		b.Fatalf("error while retrieving host 'Zabbix server'.\nReason : %v", err)
+	}
+
+	if len(h) == 0 {
+		b.Fatal("an empty list of hosts was returned")
+	}
+
+	for i := 0; i < b.N; i++ {
+		getTriggerId(testingClient, h[0].HostId, "High CPU utilization")
 	}
 }
 
@@ -56,7 +62,7 @@ func TestAddLink(t *testing.T) {
 		triggerLinkColor: "DD0000",
 	}
 
-	zbxMap = addLink(zbxMap, &params)
+	addLink(zbxMap, params)
 
 	if len(zbxMap.Links) != 1 {
 		t.Fatalf("wrong number of links set in the map.\nExpected : '1'\nReturned : %d", len(zbxMap.Links))
@@ -90,5 +96,20 @@ func TestAddLink(t *testing.T) {
 
 	if link.LinkTriggers[1].Color != "DD0000" {
 		t.Fatalf("wrong trigger color (2) set.\nExpected : 'DD0000'\nReturned : %s", link.LinkTriggers[1].Color)
+	}
+}
+
+func BenchmarkAddLink(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		zbxMap := zabbixgosdk.MapCreateParameters{}
+
+		addLink(&zbxMap, linkParameters{
+			localElement:     "router-1",
+			localTrigger:     "11",
+			remoteElement:    "router-2",
+			remoteTrigger:    "12",
+			linkColor:        "000000",
+			triggerLinkColor: "DD0000",
+		})
 	}
 }

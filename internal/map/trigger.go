@@ -8,7 +8,7 @@ import (
 
 // getTriggerId is used to retrive the triggerId for a given host with a specific pattern (used to filtrer the description field).
 func getTriggerId(client *zabbixgosdk.ZabbixService, hostId string, pattern string) (string, error) {
-	t, err := client.Trigger.Get(&zabbixgosdk.TriggerGetParameters{
+	params := zabbixgosdk.TriggerGetParameters{
 		Output: []string{
 			"triggerid",
 		},
@@ -18,7 +18,9 @@ func getTriggerId(client *zabbixgosdk.ZabbixService, hostId string, pattern stri
 		Filter: map[string]string{
 			"description": pattern,
 		},
-	})
+	}
+
+	t, err := client.Trigger.Get(&params)
 
 	if err != nil {
 		return "", err
@@ -42,8 +44,8 @@ type linkParameters struct {
 }
 
 // addLink is used to a link between a remote and local hosts for a given mapping.
-func addLink(zbxMap *zabbixgosdk.MapCreateParameters, p *linkParameters) *zabbixgosdk.MapCreateParameters {
-	link := zabbixgosdk.MapLink{
+func addLink(zbxMap *zabbixgosdk.MapCreateParameters, p linkParameters) {
+	zbxMap.Links = append(zbxMap.Links, &zabbixgosdk.MapLink{
 		SelementId1: p.localElement,
 		SelementId2: p.remoteElement,
 		Color:       p.linkColor,
@@ -57,9 +59,5 @@ func addLink(zbxMap *zabbixgosdk.MapCreateParameters, p *linkParameters) *zabbix
 				Color:     p.triggerLinkColor,
 			},
 		},
-	}
-
-	zbxMap.Links = append(zbxMap.Links, &link)
-
-	return zbxMap
+	})
 }

@@ -7,19 +7,20 @@ import (
 )
 
 func TestElementExist(t *testing.T) {
-	elements := make([]*zabbixgosdk.MapElement, 0)
-	elements = append(elements, &zabbixgosdk.MapElement{
-		Id:        "1",
-		IconIdOff: "1",
-	})
-	elements = append(elements, &zabbixgosdk.MapElement{
-		Id:        "1",
-		IconIdOff: "2",
-	})
-	elements = append(elements, &zabbixgosdk.MapElement{
-		Id:        "2",
-		IconIdOff: "3",
-	})
+	elements := []*zabbixgosdk.MapElement{
+		{
+			Id:        "1",
+			IconIdOff: "1",
+		},
+		{
+			Id:        "1",
+			IconIdOff: "2",
+		},
+		{
+			Id:        "2",
+			IconIdOff: "3",
+		},
+	}
 
 	b := elementExist("1", elements)
 	if !b {
@@ -29,6 +30,27 @@ func TestElementExist(t *testing.T) {
 	b = elementExist("3", elements)
 	if b {
 		t.Fatalf("a false bool should be returned when an element with the same id does not exist in the list")
+	}
+}
+
+func BenchmarkElementExist(b *testing.B) {
+	elements := []*zabbixgosdk.MapElement{
+		{
+			Id:        "1",
+			IconIdOff: "1",
+		},
+		{
+			Id:        "1",
+			IconIdOff: "2",
+		},
+		{
+			Id:        "2",
+			IconIdOff: "3",
+		},
+	}
+
+	for i := 0; i < b.N; i++ {
+		elementExist("1", elements)
 	}
 }
 
@@ -55,4 +77,11 @@ func TestValidateHexaFail(t *testing.T) {
 		t.Fatalf("an error should be returned when the given string is too long")
 	}
 
+}
+
+func BenchmarkValidateHexa(b *testing.B) {
+	hexa := "FFFFFF"
+	for i := 0; i < b.N; i++ {
+		validateHexa(hexa)
+	}
 }

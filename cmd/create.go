@@ -13,9 +13,9 @@ var Name string
 var File string
 var Color string
 var TriggerColor string
-var Width string
-var Height string
-var Spacer int64
+var Width int
+var Height int
+var Spacer int
 var StackHosts []bool
 var DryRun bool
 
@@ -89,9 +89,9 @@ func newCreateCmd() *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&File, "file", "f", "", "file containing the hosts mapping")
 	cmd.PersistentFlags().StringVarP(&Color, "color", "c", "000000", "color in hexadecimal used for the links between each hosts")
 	cmd.PersistentFlags().StringVar(&TriggerColor, "trigger-color", "DD0000", "color in hexadecimal used for the links between each hosts when a trigger is in problem state")
-	cmd.PersistentFlags().StringVar(&Height, "height", "800", "height in pixel of the map")
-	cmd.PersistentFlags().StringVar(&Width, "width", "800", "width in pixel of the map")
-	cmd.PersistentFlags().Int64Var(&Spacer, "spacer", 100, "space in pixel between each host (example : X_host2 = X_host1 + <value>)")
+	cmd.PersistentFlags().IntVar(&Height, "height", 800, "height in pixel of the map")
+	cmd.PersistentFlags().IntVar(&Width, "width", 800, "width in pixel of the map")
+	cmd.PersistentFlags().IntVar(&Spacer, "spacer", 100, "space in pixel between each host (example : X_host2 = X_host1 + <value>)")
 	cmd.PersistentFlags().BoolSliceVar(&StackHosts, "stack-hosts", []bool{true}, "connect multiple links to a single host. If set to false, each mapping will have is own hosts (local and remote). This can be useful for infrastructure with redundant connexion")
 	cmd.PersistentFlags().BoolVar(&DryRun, "dry-run", false, "output to the shell the map definition without created it on the server")
 	cmd.MarkPersistentFlagRequired("name")

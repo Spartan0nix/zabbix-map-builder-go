@@ -1,6 +1,6 @@
 module github.com/Spartan0nix/zabbix-map-builder-go
 
-go 1.19
+go 1.21
 
 require (
 	github.com/Spartan0nix/zabbix-go-sdk/v2 v2.1.2

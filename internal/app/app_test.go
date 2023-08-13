@@ -38,8 +38,8 @@ func TestRunCreate(t *testing.T) {
 		Name:         generateMapName(),
 		Color:        "7AC2E1",
 		TriggerColor: "EE445B",
-		Width:        "400",
-		Height:       "400",
+		Width:        400,
+		Height:       400,
 		Spacer:       50,
 	}
 
@@ -65,8 +65,8 @@ func TestRunCreateDryRun(t *testing.T) {
 		Name:         generateMapName(),
 		Color:        "7AC2E1",
 		TriggerColor: "EE445B",
-		Height:       "800",
-		Width:        "800",
+		Height:       800,
+		Width:        800,
 		Spacer:       50,
 		DryRun:       true,
 	}
@@ -110,8 +110,8 @@ func TestRunCreateOutFile(t *testing.T) {
 		Name:         generateMapName(),
 		Color:        "7AC2E1",
 		TriggerColor: "EE445B",
-		Height:       "800",
-		Width:        "800",
+		Height:       800,
+		Width:        800,
 		Spacer:       50,
 		OutFile:      outFile,
 	}
@@ -165,8 +165,8 @@ func BenchmarkRunCreate(b *testing.B) {
 		ZabbixPwd:    ZABBIX_PWD,
 		Color:        "7AC2E1",
 		TriggerColor: "EE445B",
-		Width:        "400",
-		Height:       "400",
+		Width:        400,
+		Height:       400,
 		Spacer:       50,
 	}
 

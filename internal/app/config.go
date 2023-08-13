@@ -17,9 +17,9 @@ type MapOptions struct {
 	OutFile      string
 	Color        string
 	TriggerColor string
-	Height       string
-	Width        string
-	Spacer       int64
+	Height       int
+	Width        int
+	Spacer       int
 	StackHosts   bool
 	DryRun       bool
 }

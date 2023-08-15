@@ -39,6 +39,7 @@ func WalkBulk(p *gosnmp.GoSNMP, oid string) (*SnmpResponse, error) {
 // Get is used to retrieve subtree data from a oid using a get request
 func Get(p *gosnmp.GoSNMP, oids []string) (*SnmpResponse, error) {
 	response := &SnmpResponse{}
+	response.Entries = make([]*SnmpEntry, len(oids))
 
 	// Keep stats about the duration of the request
 	p.OnSent = func(gs *gosnmp.GoSNMP) {
@@ -55,15 +56,15 @@ func Get(p *gosnmp.GoSNMP, oids []string) (*SnmpResponse, error) {
 		return nil, err
 	}
 
-	for _, variable := range res.Variables {
+	for i, variable := range res.Variables {
 		if variable.Type == gosnmp.NoSuchInstance || variable.Type == gosnmp.NoSuchObject {
 			continue
 		}
-		response.Entries = append(response.Entries, &SnmpEntry{
+		response.Entries[i] = &SnmpEntry{
 			Format: variable.Type,
 			Oid:    variable.Name,
 			Value:  variable.Value,
-		})
+		}
 	}
 
 	return response, nil
@@ -72,6 +73,7 @@ func Get(p *gosnmp.GoSNMP, oids []string) (*SnmpResponse, error) {
 // GetNext is used to retrieve the next value in a subtree
 func GetNext(p *gosnmp.GoSNMP, oids []string) (*SnmpResponse, error) {
 	response := &SnmpResponse{}
+	response.Entries = make([]*SnmpEntry, len(oids))
 
 	// Keep stats about the duration of the request
 	p.OnSent = func(gs *gosnmp.GoSNMP) {
@@ -88,15 +90,15 @@ func GetNext(p *gosnmp.GoSNMP, oids []string) (*SnmpResponse, error) {
 		return nil, err
 	}
 
-	for _, variable := range res.Variables {
+	for i, variable := range res.Variables {
 		if variable.Type == gosnmp.NoSuchInstance || variable.Type == gosnmp.NoSuchObject || variable.Type == gosnmp.EndOfContents {
 			continue
 		}
-		response.Entries = append(response.Entries, &SnmpEntry{
+		response.Entries[i] = &SnmpEntry{
 			Format: variable.Type,
 			Oid:    variable.Name,
 			Value:  variable.Value,
-		})
+		}
 	}
 
 	return response, nil

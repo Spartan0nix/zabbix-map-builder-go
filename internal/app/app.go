@@ -34,7 +34,7 @@ func RunCreate(file string, options *MapOptions, logger *logging.Logger) error {
 
 	// Catch logout error
 	defer func() {
-		err = client.Logout()
+		client.Logout()
 	}()
 
 	// Remove duplicate from the hosts mappings and associate 'host' -> 'hostid'

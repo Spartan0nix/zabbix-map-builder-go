@@ -58,7 +58,7 @@ func init() {
 
 // generateMapName is used to generate a random name for each map created during test.
 func generateMapName() string {
-	rand.Seed(time.Now().UnixNano())
+	rand.NewSource(time.Now().UnixNano())
 	value := rand.Intn(rand.Intn(9999))
 
 	return fmt.Sprintf("test-map-builder-%d", value)

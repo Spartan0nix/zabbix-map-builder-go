@@ -15,9 +15,10 @@ func getTriggerId(client *zabbixgosdk.ZabbixService, hostId string, pattern stri
 		HostIds: []string{
 			hostId,
 		},
-		Filter: map[string]string{
+		Search: map[string]string{
 			"description": pattern,
 		},
+		SearchWildcardsEnabled: false,
 	}
 
 	t, err := client.Trigger.Get(&params)
@@ -26,8 +27,8 @@ func getTriggerId(client *zabbixgosdk.ZabbixService, hostId string, pattern stri
 		return "", err
 	}
 
-	if len(t) > 1 {
-		return "", fmt.Errorf("more than one trigger was found for the host '%s' with the given pattern '%s'", hostId, pattern)
+	if len(t) != 1 {
+		return "", fmt.Errorf("more or less than one trigger was found for the host '%s' with the given pattern '%s'", hostId, pattern)
 	}
 
 	return t[0].Id, nil

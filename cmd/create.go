@@ -29,8 +29,11 @@ func checkCreateRequiredFlag(name string, file string) string {
 		return "'file' flag is required and cannot be empty"
 	}
 
-	if _, err := os.Stat(file); err != nil {
-		return fmt.Sprintf("error while reading file '%s'.", file)
+	_, err := os.Stat(file)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return fmt.Sprintf("error while reading file '%s'.", file)
+		}
 	}
 
 	return ""

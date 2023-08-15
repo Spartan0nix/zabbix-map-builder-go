@@ -15,6 +15,58 @@ const (
 	COMMUNITY = "router-1"
 )
 
+func TestCheckGenerateRequiredFlag(t *testing.T) {
+	err := checkGenerateRequiredFlag(ROUTER, COMMUNITY)
+	if err != "" {
+		t.Fatalf("expected no error to be returned.\nError returned : %s", err)
+	}
+}
+
+func TestCheckGenerateRequiredFlagMissingHost(t *testing.T) {
+	expectedError := "'host' flag is required and cannot be empty"
+
+	err := checkGenerateRequiredFlag("", mappingFilePath)
+	if err == "" {
+		t.Fatalf("expected an error to be returned (none returned).")
+	}
+
+	if err != expectedError {
+		t.Fatalf("wrong message returned.\nExpected : %s\nReturned : %s", expectedError, err)
+	}
+}
+
+func TestCheckGenerateRequiredFlagMissingCommunity(t *testing.T) {
+	expectedError := "'community' flag is required and cannot be empty"
+
+	err := checkGenerateRequiredFlag(ROUTER, "")
+	if err == "" {
+		t.Fatalf("expected an error to be returned (none returned).")
+	}
+
+	if err != expectedError {
+		t.Fatalf("wrong message returned.\nExpected : %s\nReturned : %s", expectedError, err)
+	}
+}
+
+func BenchmarkCheckGenerateRequiredFlag(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		checkGenerateRequiredFlag("host", "community")
+	}
+}
+
+func TestNewGenerateCmd(t *testing.T) {
+	cmd := newGenerateCmd()
+	var expectedType *cobra.Command
+
+	if cmd == nil {
+		t.Fatalf("expected *cobra.Command to be returned, a nil pointer was returned instead")
+	}
+
+	if reflect.TypeOf(cmd) != reflect.TypeOf(expectedType) {
+		t.Fatalf("wrong type returned\nExpected *cobra.Command\nReturned : %s", reflect.TypeOf(cmd))
+	}
+}
+
 func TestExecuteGenerate(t *testing.T) {
 	if os.Getenv("BE_CRASHER") == "1" {
 		// Set the required arguments
@@ -79,58 +131,27 @@ func TestExecuteGenerateFail(t *testing.T) {
 	}
 }
 
-func TestNewGenerateCmd(t *testing.T) {
-	cmd := newGenerateCmd()
-	var expectedType *cobra.Command
+func BenchmarkExecuteGenerate(b *testing.B) {
+	oldOsArgs := os.Args
+	oldStdout := os.Stdout
+	defer resetOsConf(oldOsArgs, oldStdout)
 
-	if cmd == nil {
-		t.Fatalf("expected *cobra.Command to be returned, a nil pointer was returned instead")
+	os.Args = []string{
+		os.Args[0],
+		"generate",
+		"--host",
+		ROUTER,
+		"--community",
+		COMMUNITY,
+		"--port",
+		"1161",
 	}
 
-	if reflect.TypeOf(cmd) != reflect.TypeOf(expectedType) {
-		t.Fatalf("wrong type returned\nExpected *cobra.Command\nReturned : %s", reflect.TypeOf(cmd))
+	os.Stdout = nil
+
+	// Run the command in the subprocess
+	for i := 0; i < b.N; i++ {
+		Execute()
 	}
+
 }
-
-func TestCheckGenerateRequiredFlag(t *testing.T) {
-	err := checkGenerateRequiredFlag(ROUTER, COMMUNITY)
-	if err != "" {
-		t.Fatalf("expected no error to be returned.\nError returned : %s", err)
-	}
-}
-
-func TestCheckGenerateRequiredFlagMissingHost(t *testing.T) {
-	expectedError := "'host' flag is required and cannot be empty"
-
-	err := checkGenerateRequiredFlag("", mappingFilePath)
-	if err == "" {
-		t.Fatalf("expected an error to be returned (none returned).")
-	}
-
-	if err != expectedError {
-		t.Fatalf("wrong message returned.\nExpected : %s\nReturned : %s", expectedError, err)
-	}
-}
-
-func TestCheckGenerateRequiredFlagMissingCommunity(t *testing.T) {
-	expectedError := "'community' flag is required and cannot be empty"
-
-	err := checkGenerateRequiredFlag(ROUTER, "")
-	if err == "" {
-		t.Fatalf("expected an error to be returned (none returned).")
-	}
-
-	if err != expectedError {
-		t.Fatalf("wrong message returned.\nExpected : %s\nReturned : %s", expectedError, err)
-	}
-}
-
-// func BenchmarkCheckGenerateRequiredFlag(b *testing.B) {
-// 	b.ReportAllocs()
-// 	for i := 0; i < b.N; i++ {
-// 		str := checkGenerateRequiredFlag("host", "community")
-// 		if str != "" {
-// 			b.Fatalf("an empty string should be returned\nValue returned : %s", str)
-// 		}
-// 	}
-// }

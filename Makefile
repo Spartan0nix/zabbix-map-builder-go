@@ -1,6 +1,6 @@
 SHELL = /bin/bash
-FUNCTION = BenchmarkOutputToFile([2])?
-FOLDER = internal/app
+FUNCTION = BenchmarkCheckGenerateRequiredFlag
+FOLDER = cmd
 
 .PHONY: build
 
@@ -215,18 +215,19 @@ clean-test-cache:
 run-test:
 	@echo "Running test..."
 	go test ./... -args -test.run "^Test.+$$"
-
+	go test ./... -args -test.run "^TestParseCdpCache$"
+	
 run-test-debug:
 	@echo "Running test...(with verbose output)"
 	go test ./... -v -args -test.run "^Test.+$$"
 
 run-coverage:
 	@echo "Running test...(with coverage)"
-	go test -coverprofile=coverage.out ./... -args -test.run "^Test.+$$"
+	go test -cover -coverprofile=coverage.out ./... -args -test.run "^Test.+$$"
 
 run-coverage-debug:
 	@echo "Running test...(with coverage + verbose output)"
-	go test -coverprofile=coverage.out ./... -v -args -test.run "^Test.+$$"
+	go test -cover -coverprofile=coverage.out ./... -v -args -test.run "^Test.+$$"
 
 # ------------------------------------------------
 # Bench

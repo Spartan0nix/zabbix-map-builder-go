@@ -35,17 +35,15 @@ IfXEntry :: 1.3.6.1.2.1.31.1.1.1
 	ifName (STRING) :: 1.3.6.1.2.1.31.1.1.1.1.102 = "GigabitEthernet1"
 	
 cdpCacheCapabilities :
-R - Router
-T - Trans Bridge
-B - Source Route Bridge
-S - Switch
-H - Host
-I - IGMP
-r - Repeater
-P - Phone
-D - Remote
-C - CVTA
-M - Two-port Mac Relay
+- Router                     [R] : 0x01
+- Trans Bridge               [T] : 0x02
+- Source Route Bridge        [B] : 0x04
+- Switch                     [S] : 0x08
+- Host                       [H] : 0x10
+- IGMP conditional filtering [I] : 0x20
+- Repeater                   [r] : 0x40
+- VoIP Phone                 [P] : 0x80
+- Remotely-Managed Device    [D] : 0x100
 
 https://community.cisco.com/t5/network-management/cdpcachecapabilities-where-is-the-cdp-spec/td-p/1120164
 -------------------------------------------------------------------------------

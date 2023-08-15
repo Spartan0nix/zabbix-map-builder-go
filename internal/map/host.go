@@ -8,18 +8,31 @@ import (
 
 // hostPosition is used to keep track of the position of an host on the map
 type hostPosition struct {
-	spacer int64
-	mapX   int64
-	mapY   int64
-	x      int64
-	y      int64
+	spacer int
+	mapX   int
+	mapY   int
+	x      int
+	y      int
 }
 
+// hostParameters define the parameters required to add an host element to a map
 type hostParameters struct {
 	id       string
 	name     string
 	image    string
 	position *hostPosition
+}
+
+// initPosition is used to initialize the default placement values based on the given map width and height
+func initPosition(width int, height int, spacer int) (*hostPosition, error) {
+	// Initialize the default position of the first host to the left upper corner
+	return &hostPosition{
+		spacer: spacer,
+		mapX:   width,
+		mapY:   height,
+		x:      spacer,
+		y:      spacer,
+	}, nil
 }
 
 // updateHostPosition is used to update the position for the next host
@@ -45,24 +58,6 @@ func (p *hostPosition) updateHostPosition() {
 	}
 }
 
-// initPosition is used to initialize the default placement values based on the given map width and height
-func initPosition(width string, height string, spacer int64) (*hostPosition, error) {
-	// Convert string values to int64
-	mapX, mapY, err := convertPositionToInt64(width, height)
-	if err != nil {
-		return nil, err
-	}
-
-	// Initialize the default position of the first host to the left upper corner
-	return &hostPosition{
-		spacer: spacer,
-		mapX:   mapX,
-		mapY:   mapY,
-		x:      spacer,
-		y:      spacer,
-	}, nil
-}
-
 // createHostElement is used to create a new MapElementHost.
 // The given id is used to reference the host in the map links.
 func createHostElement(id string, host string, image string, x string, y string) *zabbixgosdk.MapElement {
@@ -82,7 +77,8 @@ func createHostElement(id string, host string, image string, x string, y string)
 
 // addHosts is used to add hosts (local and remote) for a given mapping if they do not already exist in the map.
 func addHosts(zbxMap *zabbixgosdk.MapCreateParameters, params *hostParameters) *zabbixgosdk.MapCreateParameters {
-	if exist := elementExist(params.id, zbxMap.Elements); !exist {
+	exist := elementExist(params.id, zbxMap.Elements)
+	if !exist {
 		element := createHostElement(params.id, params.name, params.image, fmt.Sprintf("%d", params.position.x), fmt.Sprintf("%d", params.position.y))
 		zbxMap.Elements = append(zbxMap.Elements, element)
 

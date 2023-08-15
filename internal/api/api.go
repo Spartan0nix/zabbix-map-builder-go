@@ -24,12 +24,7 @@ func initService(url string) (*zabbixgosdk.ZabbixService, error) {
 
 // authenticate is used to retrieve an Api token for the HostGroup service.
 func authenticate(client *zabbixgosdk.ZabbixService, user string, password string) error {
-	u := &zabbixgosdk.ApiUser{
-		User: user,
-		Pwd:  password,
-	}
-
-	res, err := client.Auth.GetCredentials(u.User, u.Pwd)
+	res, err := client.Auth.GetCredentials(user, password)
 	if err != nil {
 		return err
 	}

@@ -1,10 +1,23 @@
 package app
 
 import (
+	"fmt"
+	"os"
+
 	zabbixgosdk "github.com/Spartan0nix/zabbix-go-sdk/v2"
 	"github.com/Spartan0nix/zabbix-map-builder-go/internal/api"
 	zbxMap "github.com/Spartan0nix/zabbix-map-builder-go/internal/map"
 )
+
+// outputToFile is used to write data to a file.
+func outputToFile(file string, b []byte) error {
+	if file == "" {
+		return fmt.Errorf("file name cannot be empty")
+	}
+
+	err := os.WriteFile(file, b, 0640)
+	return err
+}
 
 // getUniqueHosts is used to get a map where each key correspond to an host name reference in the list of Mapping and the value, the hostid associated on the Zabbix server.
 func getUniqueHosts(client *zabbixgosdk.ZabbixService, mappings []*zbxMap.Mapping) (map[string]string, error) {

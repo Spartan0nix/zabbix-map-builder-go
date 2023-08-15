@@ -2,13 +2,13 @@ package utils
 
 import "testing"
 
-func TestGetMapKey(t *testing.T) {
-	data := map[string]string{
-		"key1": "value1",
-		"key2": "value2",
-	}
+var dataMap = map[string]string{
+	"key1": "value1",
+	"key2": "value2",
+}
 
-	out := GetMapKey(data)
+func TestGetMapKey(t *testing.T) {
+	out := GetMapKey(dataMap)
 
 	if len(out) != 2 {
 		t.Fatalf("wrong number of entries returned.\nExepected : '2'\nReturned : %d", len(out))
@@ -20,5 +20,11 @@ func TestGetMapKey(t *testing.T) {
 
 	if out[0] != "key2" && out[1] != "key2" {
 		t.Fatalf("failed to find key 'key2'.\nReturned : %v", out)
+	}
+}
+
+func BenchmarkGetMapKey(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		GetMapKey(dataMap)
 	}
 }

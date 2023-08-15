@@ -1,8 +1,9 @@
 package _map
 
 import (
+	"encoding/hex"
 	"fmt"
-	"strconv"
+	"strings"
 
 	zabbixgosdk "github.com/Spartan0nix/zabbix-go-sdk/v2"
 )
@@ -20,33 +21,15 @@ func elementExist(id string, elements []*zabbixgosdk.MapElement) bool {
 
 // validateHexa is used to validate that the given string is in hexadecimal format.
 func validateHexa(h string) error {
-	if string(h[0]) == "#" {
+	b := strings.HasPrefix(h, "#")
+	if b {
 		return fmt.Errorf("hexadecimal color should not start with a '#', value parsed '%s'", h)
 	}
 
-	if len(h) > 6 {
-		return fmt.Errorf("maximum length for hexadecimal color is 6, the given value length is %d", len(h))
+	if len(h) != 6 {
+		return fmt.Errorf("hexadecimal color are coded using 6 hexadecimal caracters, the given value length is %d", len(h))
 	}
 
-	_, err := strconv.ParseUint(h, 16, 64)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// convertPositionToInt is used to convert to position x and y from string to int64
-func convertPositionToInt64(x string, y string) (int64, int64, error) {
-	xToInt, err := strconv.ParseInt(x, 10, 64)
-	if err != nil {
-		return 0, 0, err
-	}
-
-	yToInt, err := strconv.ParseInt(y, 10, 64)
-	if err != nil {
-		return 0, 0, err
-	}
-
-	return xToInt, yToInt, nil
+	_, err := hex.DecodeString(h)
+	return err
 }

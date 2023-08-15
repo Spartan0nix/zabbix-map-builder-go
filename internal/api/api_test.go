@@ -4,6 +4,8 @@ import (
 	"log"
 	"testing"
 
+	_ "net/http/pprof"
+
 	zabbixgosdk "github.com/Spartan0nix/zabbix-go-sdk/v2"
 )
 
@@ -16,10 +18,14 @@ const (
 var testingClient *zabbixgosdk.ZabbixService
 
 func init() {
-	var err error
-	testingClient, err = InitApi(ZABBIX_URL, ZABBIX_USER, ZABBIX_PWD)
+	testingClient = zabbixgosdk.NewZabbixService()
+	testingClient.Auth.Client.Url = ZABBIX_URL
+	testingClient.Map.Client.Url = ZABBIX_URL
+	testingClient.Trigger.Client.Url = ZABBIX_URL
+
+	err := authenticate(testingClient, ZABBIX_USER, ZABBIX_PWD)
 	if err != nil {
-		log.Fatalf("error while executing InitApi function.\nReason : %v", err)
+		log.Fatalf("error while initializing testing client\nReason : %v", err)
 	}
 }
 
@@ -193,5 +199,41 @@ func TestGetImagesId(t *testing.T) {
 
 	if images["Cloud_(24)"] == "" {
 		t.Fatal("no imageid was associated to the 'Cloud_(24)' image")
+	}
+}
+
+func BenchmarkInitService(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		initService(ZABBIX_URL)
+	}
+}
+
+func BenchmarkAuthenticate(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		authenticate(testingClient, ZABBIX_USER, ZABBIX_PWD)
+	}
+}
+
+func BenchmarkInitApi(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		InitApi(ZABBIX_URL, ZABBIX_USER, ZABBIX_PWD)
+	}
+}
+
+func BenchmarkGetHostsId(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		GetHostsId(testingClient, map[string]string{
+			"router-1": "",
+			"router-2": "",
+		})
+	}
+}
+
+func BenchmarkGetImagesId(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		GetHostsId(testingClient, map[string]string{
+			"Switch_(64)":   "",
+			"Firewall_(64)": "",
+		})
 	}
 }

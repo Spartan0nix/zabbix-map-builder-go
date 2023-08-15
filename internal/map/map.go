@@ -23,9 +23,9 @@ type MapOptions struct {
 	Name         string
 	Color        string
 	TriggerColor string
-	Height       string
-	Width        string
-	Spacer       int64
+	Height       int
+	Width        int
+	Spacer       int
 	StackHosts   bool
 	Mappings     []*Mapping
 	Hosts        map[string]string
@@ -34,79 +34,61 @@ type MapOptions struct {
 
 // Validate is used to validate options that will be passed to a map.
 func (o *MapOptions) Validate() error {
+	var err error
+
 	if o.Name == "" {
 		return fmt.Errorf("a name is required to create the map, used the 'name' flag to set one")
 	}
 
 	if o.Color == "" {
 		o.Color = "000000"
-	}
-
-	if o.TriggerColor == "" {
-		o.TriggerColor = "DD0000"
-	}
-
-	if o.Color != "000000" {
-		if err := validateHexa(o.Color); err != nil {
+	} else {
+		err = validateHexa(o.Color)
+		if err != nil {
 			return err
 		}
 	}
 
-	if o.TriggerColor != "DD0000" {
-		if err := validateHexa(o.TriggerColor); err != nil {
+	if o.TriggerColor == "" {
+		o.TriggerColor = "DD0000"
+	} else {
+		err = validateHexa(o.TriggerColor)
+		if err != nil {
 			return err
 		}
 	}
 
 	if o.Mappings == nil {
-		return fmt.Errorf("no mappings were passed to the build function")
+		err = fmt.Errorf("no mappings were passed to the build function")
+		if err != nil {
+			return err
+		}
 	}
 
 	if o.Hosts == nil {
-		return fmt.Errorf("no mapping 'host' -> 'hostid' was passed to the build function")
+		err = fmt.Errorf("no mapping 'host' -> 'hostid' was passed to the build function")
+		if err != nil {
+			return err
+		}
 	}
 
 	if o.Images == nil {
-		return fmt.Errorf("no images were passed to the build function")
-	}
-
-	return nil
-}
-
-// buildElementId is used to update the local and remote elements id based on the number of hosts that already exists with the same id.
-// Used only is --stack-hosts is set to false.
-func buildElementsId(zbxMap *zabbixgosdk.MapCreateParameters, localElementId string, remoteElementId string) (string, string) {
-	localCount := 0
-	remoteCount := 0
-
-	for _, element := range zbxMap.Elements {
-		elementId := element.Elements.([]zabbixgosdk.MapElementHost)[0].Id
-
-		if elementId == localElementId {
-			localCount++
-		}
-		if elementId == remoteElementId {
-			remoteCount++
+		err = fmt.Errorf("no images were passed to the build function")
+		if err != nil {
+			return err
 		}
 	}
 
-	if localCount > 0 {
-		localElementId = fmt.Sprintf("%s-%d", localElementId, localCount+1)
-	}
-
-	if remoteCount > 0 {
-		remoteElementId = fmt.Sprintf("%s-%d", remoteElementId, remoteCount+1)
-	}
-
-	return localElementId, remoteElementId
+	return err
 }
 
-// BuildMap is used to build a map with the given mapping.
 func BuildMap(client *zabbixgosdk.ZabbixService, options *MapOptions) (*zabbixgosdk.MapCreateParameters, error) {
+	var unstackedHosts = make(map[string]int8, 0)
+
 	zbxMap := &zabbixgosdk.MapCreateParameters{}
 	zbxMap.Name = options.Name
-	zbxMap.Height = options.Height
-	zbxMap.Width = options.Width
+	zbxMap.Height = fmt.Sprintf("%d", options.Height)
+	zbxMap.Width = fmt.Sprintf("%d", options.Width)
 
 	position, err := initPosition(options.Width, options.Height, options.Spacer)
 	if err != nil {
@@ -120,16 +102,23 @@ func BuildMap(client *zabbixgosdk.ZabbixService, options *MapOptions) (*zabbixgo
 
 		// If hosts should not be stacked, update the elementsId by appending '-<number-of-element-already-present + 1>'
 		if !options.StackHosts {
-			localElementId, remoteElementId = buildElementsId(zbxMap, localElementId, remoteElementId)
+			// Increment the number of hosts
+			unstackedHosts[mapping.LocalHost] += 1
+			unstackedHosts[mapping.RemoteHost] += 1
+			// Build the new elements ids
+			localElementId = fmt.Sprintf("%s-%d", options.Hosts[mapping.LocalHost], unstackedHosts[mapping.LocalHost])
+			remoteElementId = fmt.Sprintf("%s-%d", options.Hosts[mapping.RemoteHost], unstackedHosts[mapping.LocalHost])
 		}
 
-		// Add the hosts to the map
+		// Add the local host to the map
 		zbxMap = addHosts(zbxMap, &hostParameters{
 			id:       localElementId,
 			name:     options.Hosts[mapping.LocalHost],
 			image:    options.Images[mapping.LocalImage],
 			position: position,
 		})
+
+		// Add the remote host to the map
 		zbxMap = addHosts(zbxMap, &hostParameters{
 			id:       remoteElementId,
 			name:     options.Hosts[mapping.RemoteHost],
@@ -137,7 +126,7 @@ func BuildMap(client *zabbixgosdk.ZabbixService, options *MapOptions) (*zabbixgo
 			position: position,
 		})
 
-		// Retriev the triggers id based on the given pattern for each hosts
+		// Retrieve the triggers id based on the given pattern for each hosts
 		localTriggerId, err := getTriggerId(client, options.Hosts[mapping.LocalHost], mapping.LocalTriggerPattern)
 		if err != nil {
 			return nil, err
@@ -149,7 +138,7 @@ func BuildMap(client *zabbixgosdk.ZabbixService, options *MapOptions) (*zabbixgo
 		}
 
 		// Add the link to the map
-		zbxMap = addLink(zbxMap, &linkParameters{
+		addLink(zbxMap, linkParameters{
 			localElement:     localElementId,
 			localTrigger:     localTriggerId,
 			remoteElement:    remoteElementId,

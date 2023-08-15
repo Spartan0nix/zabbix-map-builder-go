@@ -12,6 +12,9 @@ services:
       - POSTGRES_DB=zabbix
     volumes:
       - postgres-map-build:/var/lib/postgresql/data
+    networks:
+      zabbix-network:
+        ipv4_address: 172.16.80.10
   
   zabbix-server:
     image: docker.io/zabbix/zabbix-server-pgsql:alpine-6.0-latest
@@ -21,6 +24,11 @@ services:
       - DB_SERVER_HOST=postgres
       - POSTGRES_USER=zabbix
       - POSTGRES_PASSWORD=password
+    networks:
+      zabbix-network:
+        ipv4_address: 172.16.80.11
+      router-network:
+        ipv4_address: 172.16.80.138
   
   zabbix-web:
     image: docker.io/zabbix/zabbix-web-nginx-pgsql:alpine-6.0-latest
@@ -34,6 +42,9 @@ services:
       - POSTGRES_PASSWORD=password
       - ZBX_SERVER_HOST=zabbix-server
       - PHP_TZ=Europe/Paris
+    networks:
+      zabbix-network:
+        ipv4_address: 172.16.80.12
     
   # -------------------------------------
   # Routers
@@ -44,6 +55,10 @@ services:
     restart: unless-stopped
     volumes:
       - ./examples/data/router-1.snmpwalk:/data/router-1.snmpwalk
+    networks:
+      router-network:
+        ipv4_address: 172.16.80.161
+
 
   router-2:
     build: ./build/router
@@ -51,6 +66,9 @@ services:
     restart: unless-stopped
     volumes:
       - ./examples/data/router-2.snmpwalk:/data/router-2.snmpwalk
+    networks:
+      router-network:
+        ipv4_address: 172.16.80.162
 
   router-3:
     build: ./build/router
@@ -58,7 +76,23 @@ services:
     restart: unless-stopped
     volumes:
       - ./examples/data/router-3.snmpwalk:/data/router-3.snmpwalk
+    networks:
+      router-network:
+        ipv4_address: 172.16.80.163
 
 volumes:
   postgres-map-build:
-  
+
+networks:
+  zabbix-network:
+    ipam:
+      config:
+        - subnet: 172.16.80.0/25
+          ip_range: 172.16.80.1/25
+          gateway: 172.16.80.126
+  router-network:
+    ipam:
+      config:
+        - subnet: 172.16.80.128/25
+          ip_range: 172.16.80.129/25
+          gateway: 172.16.80.254

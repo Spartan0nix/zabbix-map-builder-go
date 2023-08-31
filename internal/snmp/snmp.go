@@ -124,7 +124,7 @@ func ParseCdpCache(entries []*SnmpEntry, logger *logging.Logger) []*SnmpCdpEntry
 				unsupportedEntries = append(unsupportedEntries, position)
 			}
 		default:
-			logger.Warning(fmt.Sprintf("unsupported SNMP node 'oid : %s' found in the CDP cache", entry.Oid))
+			logger.Debug(fmt.Sprintf("unsupported SNMP node 'oid : %s' found in the CDP cache", entry.Oid))
 		}
 	}
 

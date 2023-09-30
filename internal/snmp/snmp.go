@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/Spartan0nix/zabbix-map-builder-go/internal/logging"
@@ -59,8 +60,6 @@ func ParseCdpCache(entries []*SnmpEntry, logger *logging.Logger) []*SnmpCdpEntry
 	re := regexp.MustCompile(`(.)?1.3.6.1.4.1.9.9.23.1.2.1.1.(\d+).(\d+).\d+`)
 	// Consolidated cdp cache
 	cdpCache := make([]*SnmpCdpEntry, 0)
-	// unsupportedEntries keep track of entry without enough capacilities to be consider a router or a switch
-	unsupportedEntries := make([]int, 0)
 
 	for _, entry := range entries {
 		match := re.FindSubmatch([]byte(entry.Oid))
@@ -116,29 +115,28 @@ func ParseCdpCache(entries []*SnmpEntry, logger *logging.Logger) []*SnmpCdpEntry
 			c := entry.Value.([]uint8)
 
 			// Check for supported capabilities
-			if ok := SupportedCdpCacheCapabilities(c); ok {
+			ok := SupportedCdpCacheCapabilities(c)
+			if ok {
 				// If the device capabilities are supported, add them for further use
 				cdpCache[position].Capabilities = c
 			} else {
-				// Otherwise, add the host index to the list of entry to be removed
-				unsupportedEntries = append(unsupportedEntries, position)
+				cdpCache[position].Capabilities = nil
 			}
-		default:
-			logger.Debug(fmt.Sprintf("unsupported SNMP node 'oid : %s' found in the CDP cache", entry.Oid))
 		}
 	}
 
-	// Remove devices without the required capabilities
-	for _, i := range unsupportedEntries {
-		// Overwrite the entry with the last entry of the list
-		cdpCache[i] = cdpCache[len(cdpCache)-1]
-		// Reset the value of the last entry to prevent memory leak
-		cdpCache[len(cdpCache)-1] = nil
-		// Remove the last entry from the list
-		cdpCache = cdpCache[:len(cdpCache)-1]
+	// Create another list to filter out unsupported devices
+	outCdpCache := make([]*SnmpCdpEntry, 0)
+	// Only add devices with the required capabilities
+	for _, entry := range cdpCache {
+		if entry.Capabilities != nil {
+			outCdpCache = append(outCdpCache, entry)
+		} else {
+			logger.Debug(fmt.Sprintf("removing device '%s' since it does not have the required capabilities", entry.DeviceId))
+		}
 	}
 
-	return cdpCache
+	return outCdpCache
 }
 
 // GetLocalInterfacesName is used to retrieve the name of each local interface associated with a list of cdp entries.
@@ -163,7 +161,8 @@ func GetLocalInterfacesName(p *gosnmp.GoSNMP, entries []*SnmpCdpEntry, logger *l
 
 	// Store data as a map : interface index -> name
 	for _, entry := range res.Entries {
-		currentIndex := string(entry.Oid[len(entry.Oid)-1])
+		parts := strings.Split(entry.Oid, ".")
+		currentIndex := parts[len(parts)-1]
 		entries[indexMapping[currentIndex]].LocalPort = string(entry.Value.([]uint8))
 	}
 

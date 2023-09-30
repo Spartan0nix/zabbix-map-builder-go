@@ -82,8 +82,8 @@ Example :
 	cmd.PersistentFlags().StringVarP(&Community, "community", "c", "", "SNMP community used to retrieve data")
 	cmd.PersistentFlags().Uint16VarP(&Port, "port", "p", 161, "port to use for the SNMP requests.")
 	cmd.PersistentFlags().StringVar(&TriggerPattern, "trigger-pattern", "", triggerPatternDescription)
-	cmd.PersistentFlags().StringVar(&LocalImage, "local-host-image", "", "name of the image used to populate field 'local_image'")
-	cmd.PersistentFlags().StringVar(&RemoteImage, "remote-host-image", "", "name of the image used to populate field 'remote_image")
+	cmd.PersistentFlags().StringVar(&LocalImage, "local-host-image", "Switch_(64)", "name of the image used to populate field 'local_image'")
+	cmd.PersistentFlags().StringVar(&RemoteImage, "remote-host-image", "Switch_(64)", "name of the image used to populate field 'remote_image")
 	cmd.MarkPersistentFlagRequired("host")
 	cmd.MarkPersistentFlagRequired("community")
 

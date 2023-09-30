@@ -18,7 +18,7 @@ func getTriggerId(client *zabbixgosdk.ZabbixService, hostId string, pattern stri
 		Search: map[string]string{
 			"description": pattern,
 		},
-		SearchWildcardsEnabled: false,
+		SearchWildcardsEnabled: true,
 	}
 
 	t, err := client.Trigger.Get(&params)

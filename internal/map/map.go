@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	zabbixgosdk "github.com/Spartan0nix/zabbix-go-sdk/v2"
+	"github.com/Spartan0nix/zabbix-map-builder-go/internal/logging"
 )
 
 // Mapping define the properties used to create an hosts mapping on a Zabbix map.
@@ -82,7 +83,7 @@ func (o *MapOptions) Validate() error {
 	return err
 }
 
-func BuildMap(client *zabbixgosdk.ZabbixService, options *MapOptions) (*zabbixgosdk.MapCreateParameters, error) {
+func BuildMap(client *zabbixgosdk.ZabbixService, options *MapOptions, logger *logging.Logger) (*zabbixgosdk.MapCreateParameters, error) {
 	var unstackedHosts = make(map[string]int8, 0)
 
 	zbxMap := &zabbixgosdk.MapCreateParameters{}
@@ -99,6 +100,15 @@ func BuildMap(client *zabbixgosdk.ZabbixService, options *MapOptions) (*zabbixgo
 	for _, mapping := range options.Mappings {
 		localElementId := options.Hosts[mapping.LocalHost]
 		remoteElementId := options.Hosts[mapping.RemoteHost]
+		if localElementId == "" {
+			logger.Warning(fmt.Sprintf("host '%s' was not found on the server, skipping the creation of the mapping to '%s'", mapping.LocalHost, mapping.RemoteHost))
+			continue
+		}
+
+		if remoteElementId == "" {
+			logger.Warning(fmt.Sprintf("host '%s' was not found on the server, skipping the creation of the mapping to '%s'", mapping.RemoteHost, mapping.LocalHost))
+			continue
+		}
 
 		// If hosts should not be stacked, update the elementsId by appending '-<number-of-element-already-present + 1>'
 		if !options.StackHosts {

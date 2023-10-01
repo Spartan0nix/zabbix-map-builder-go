@@ -307,7 +307,7 @@ func TestBuildMap(t *testing.T) {
 		},
 	}
 
-	zbxMap, err := BuildMap(testingClient, opts)
+	zbxMap, err := BuildMap(testingClient, opts, nil)
 	if err != nil {
 		t.Fatalf("error while executing BuildMap function\nReason : %v", err)
 	}
@@ -370,7 +370,7 @@ func TestBuildMapUnstackedHosts(t *testing.T) {
 		},
 	}
 
-	zbxMap, err := BuildMap(testingClient, opts)
+	zbxMap, err := BuildMap(testingClient, opts, nil)
 	if err != nil {
 		t.Fatalf("error while executing BuildMap function\nReason : %v", err)
 	}
@@ -431,7 +431,7 @@ func BenchmarkBuildMap(b *testing.B) {
 	}
 
 	for i := 0; i < b.N; i++ {
-		BuildMap(testingClient, opts)
+		BuildMap(testingClient, opts, nil)
 	}
 }
 

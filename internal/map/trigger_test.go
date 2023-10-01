@@ -21,7 +21,7 @@ func TestGetTriggerId(t *testing.T) {
 		t.Fatal("an empty list of hosts was returned")
 	}
 
-	triggerId, err := getTriggerId(testingClient, h[0].HostId, "High CPU utilization")
+	triggerId, err := getTriggerId(testingClient, h[0].HostId, "*High CPU utilization*")
 	if err != nil {
 		t.Fatalf("error when executing getTriggerId function.\nReason : %v", err)
 	}
@@ -47,7 +47,7 @@ func BenchmarkGetTriggerId(b *testing.B) {
 	}
 
 	for i := 0; i < b.N; i++ {
-		getTriggerId(testingClient, h[0].HostId, "High CPU utilization")
+		getTriggerId(testingClient, h[0].HostId, "*High CPU utilization*")
 	}
 }
 

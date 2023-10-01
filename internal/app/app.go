@@ -82,7 +82,7 @@ func RunCreate(file string, options *MapOptions, logger *logging.Logger) error {
 
 	// Build the map create request
 	logger.Debug("building the map")
-	m, err := zbxmap.BuildMap(client, &mapOptions)
+	m, err := zbxmap.BuildMap(client, &mapOptions, logger)
 	if err != nil {
 		return err
 	}

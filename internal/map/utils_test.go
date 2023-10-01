@@ -1,6 +1,7 @@
 package _map
 
 import (
+	"os"
 	"testing"
 
 	zabbixgosdk "github.com/Spartan0nix/zabbix-go-sdk/v2"
@@ -84,4 +85,29 @@ func BenchmarkValidateHexa(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		validateHexa(hexa)
 	}
+}
+
+func TestMapExistsAskUser(t *testing.T) {
+	_, w, _ := os.Pipe()
+	oldStdout := os.Stdout
+	os.Stdout = w
+
+	res := mapExistsAskUser("test-map-builder")
+	if res != 1 {
+		t.Fatalf("wrong value returned\nExpected : 1\nReturned : %d", res)
+	}
+
+	os.Stdout = oldStdout
+}
+
+func BenchmarkMapExistsAskUser(b *testing.B) {
+	_, w, _ := os.Pipe()
+	oldStdout := os.Stdout
+	os.Stdout = w
+
+	for i := 0; i < b.N; i++ {
+		mapExistsAskUser("test-map-builder")
+	}
+
+	os.Stdout = oldStdout
 }

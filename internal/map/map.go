@@ -2,6 +2,7 @@ package _map
 
 import (
 	"fmt"
+	"math/rand"
 
 	zabbixgosdk "github.com/Spartan0nix/zabbix-go-sdk/v2"
 	"github.com/Spartan0nix/zabbix-map-builder-go/internal/logging"
@@ -161,9 +162,52 @@ func BuildMap(client *zabbixgosdk.ZabbixService, options *MapOptions, logger *lo
 	return zbxMap, nil
 }
 
+// mapExists is used to check if a map exists on the server.
+// If the map exists on the server, it's id is returned as a string.
+func mapExists(client *zabbixgosdk.ZabbixService, name string) (string, error) {
+	m, err := client.Map.Get(&zabbixgosdk.MapGetParameters{
+		Filter: map[string]string{
+			"name": name,
+		},
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	if len(m) > 0 {
+		return m[0].Id, nil
+	}
+
+	return "", nil
+}
+
 // CreateMap is used to create the given map.
 // The map create parameters can also be exported to a file if a file path is specified.
 func CreateMap(client *zabbixgosdk.ZabbixService, m *zabbixgosdk.MapCreateParameters) error {
+	// Check if the map exists before creating it
+	exists, err := mapExists(client, m.Name)
+	if err != nil {
+		return err
+	}
+
+	if exists != "" {
+		// If the map exists, ask the user for the next operation to perform
+		choice := mapExistsAskUser(m.Name)
+
+		if choice == 0 {
+			// Remove the map
+			_, err := client.Map.Delete([]string{exists})
+			if err != nil {
+				return err
+			}
+		} else {
+			// Append a random number to the name of the map
+			suffix := rand.Intn(999)
+			m.Name = fmt.Sprintf("%s-%d", m.Name, suffix)
+		}
+	}
+
 	res, err := client.Map.Create(m)
 	if err != nil {
 		return err

@@ -462,3 +462,20 @@ func BenchmarkCreateMap(b *testing.B) {
 		CreateMap(testingClient, params)
 	}
 }
+
+func TestMapExists(t *testing.T) {
+	id, err := mapExists(testingClient, "Local network")
+	if err != nil {
+		t.Fatalf("error while executing mapExists function\nReason : %v", err)
+	}
+
+	if id == "" {
+		t.Fatal("an empty string was returned instead of a map id")
+	}
+}
+
+func BenchmarkMapExists(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		mapExists(testingClient, "Local network")
+	}
+}
